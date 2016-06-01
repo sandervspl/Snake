@@ -1,0 +1,10 @@
+node_modules/
+.idea/
+
+
+*.js
+
+*.map
+npm-debug.log
+
+public/assets/images/.gitkeep

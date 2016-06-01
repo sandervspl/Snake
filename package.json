@@ -1,0 +1,32 @@
+{
+  "name": "tpb",
+  "version": "0.0.1",
+  "description": "The binding of education is a 2d action adventure game",
+  "main": "index.js",
+  "scripts": {
+    "start": "export NODE_ENV=production & node ./app.js",
+    "dev": "concurrently \"npm run start:webpack\" \"npm run start:dev\" ",
+    "start:webpack": "webpack-dev-server --colors --no-info --inline --hot",
+    "build": "webpack -p",
+    "start:dev": "export NODE_ENV=development & node ./app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oscaroox/TheBindingOfEducation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oscaroox/TheBindingOfEducation/issues"
+  },
+  "homepage": "https://github.com/oscaroox/TheBindingOfEducation#readme",
+  "devDependencies": {
+    "express": "^4.13.4",
+    "ts-loader": "^0.8.2",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "ejs": "^2.4.1",
+    "webpack": "^1.13.0"
+  }
+}
