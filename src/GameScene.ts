@@ -8,11 +8,14 @@ export default class GameScene
     private _lastUpdateTime: number;        // last time we updated canvas
     private _updateTime: number;            // time difference between updates
     private _candy: __Object;               // randomly added candy on field
+    private isDead: boolean;
 
     constructor()
     {
         this._lastUpdateTime = Date.now();
-        this._updateTime = 250;             // .25 seconds
+        this._updateTime = 100;             // .25 seconds
+
+        this.isDead = false;
 
         this.addEventHandlers();
         this.init();
@@ -111,7 +114,7 @@ export default class GameScene
         this._snakeParts.push(tail);
     }
 
-    // collision with candy
+    // collision
     private collisionCheck():void
     {
         var head = this._snakeParts[0],
@@ -129,6 +132,18 @@ export default class GameScene
             this._candy = null;
             this.spawnCandy();
             this.spawnTail();
+        }
+
+        for (var i = 1; i < this._snakeParts.length; i += 1) {
+            var tail = this._snakeParts[i];
+            bx1 = tail.getPositionX();
+            bx2 = tail.getPositionX() + tail.getSprite().width;
+            by1 = tail.getPositionY();
+            by2 = tail.getPositionY() + tail.getSprite().height;
+
+            if (isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2)) {
+                this.isDead = true;
+            }
         }
     }
 
@@ -167,6 +182,12 @@ export default class GameScene
     private update():void
     {
         requestAnimationFrame(() => this.update());
+
+        if (this.isDead) {
+            ctx.font = "60px Verdana";
+            ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
+            return;
+        }
 
         this.updateSnake();
         this.collisionCheck();
