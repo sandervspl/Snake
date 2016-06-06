@@ -1,5 +1,5 @@
 import {ctx} from "./defines";
-export default class __Object 
+export default class ___Object 
 {
     private _x: number;
     private _y: number;
