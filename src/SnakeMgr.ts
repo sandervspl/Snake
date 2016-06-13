@@ -14,7 +14,7 @@ export default class SnakeMgr
         this._game = game;
         this._snakeParts = snakeParts;
         this._lastUpdateTime = Date.now();
-        this._updateTime = 150;             // .15 seconds
+        this._updateTime = 100;             // .10 seconds
     }
 
     // add new tail according to last snake part's direction
@@ -28,23 +28,23 @@ export default class SnakeMgr
         switch (direction)
         {
             case Direction.DIR_UP:
-                x = this._snakeParts[last].getGridPosition().x;
-                y = this._snakeParts[last].getGridPosition().y + 1;
+                x = this._snakeParts[last].getGridPositionID().x;
+                y = this._snakeParts[last].getGridPositionID().y + 1;
                 break;
 
             case Direction.DIR_RIGHT:
-                x = this._snakeParts[last].getGridPosition().x - 1;
-                y = this._snakeParts[last].getGridPosition().y;
+                x = this._snakeParts[last].getGridPositionID().x - 1;
+                y = this._snakeParts[last].getGridPositionID().y;
                 break;
 
             case Direction.DIR_DOWN:
-                x = this._snakeParts[last].getGridPosition().x;
-                y = this._snakeParts[last].getGridPosition().y - 1;
+                x = this._snakeParts[last].getGridPositionID().x;
+                y = this._snakeParts[last].getGridPositionID().y - 1;
                 break;
 
             case Direction.DIR_LEFT:
-                x = this._snakeParts[last].getGridPosition().x + 1;
-                y = this._snakeParts[last].getGridPosition().y;
+                x = this._snakeParts[last].getGridPositionID().x + 1;
+                y = this._snakeParts[last].getGridPositionID().y;
                 break;
         }
 

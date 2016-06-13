@@ -23,6 +23,8 @@ export default class GridNode
     
     public getPosition():{x:number, y:number} { return this._Position; }
     
+    public getPositionID() { return this._PositionID; }
+    
     public draw():void
     {
         var fillColor = (this._isOccupied) ? 'green' : 'black';

@@ -5,54 +5,51 @@ export default class ___Object
 {
     private _x: number;
     private _y: number;
-    private _gridPosition: {x: number, y: number};
+    private _gridPositionID: {x: number, y: number};
     private _grid: GridNode[][];
     private _size: number;
     private _shape: string;
 
     public _isBeyondMap: boolean;
     
-    constructor(x: number, y: number, grid: GridNode[][], size: number, shape: string)
+    constructor(xid: number, yid: number, grid: GridNode[][], size: number, shape: string)
     {
         this._grid = grid;
-        this._gridPosition = { x: x, y: y };
-
-        this.setPosition(x, y);
-
-        // this._x = this._grid[x][y].getPosition().x;
-        // this._y = this._grid[x][y].getPosition().y;
+        this._gridPositionID = { x: xid, y: yid };
 
         this._size = size;
         this._shape = shape;
 
         this._isBeyondMap = false;
+
+        this.setPosition(xid, yid);
+        this.draw();
     }
     
     public getPositionX():number { return this._x; }
 
     public getPositionY():number { return this._y; }
 
-    public getGridPosition() { return this._gridPosition; }
+    public getGridPositionID() { return this._gridPositionID; }
 
     public getSize():number { return this._size; }
 
-    // set position of unit
-    public setPosition(x: number, y: number):void
+    public setPosition(xid: number, yid: number):void
     {
-        if (this._grid[x] == null || this._grid[x][y] == null) {
+        if (this._grid[xid] == null || this._grid[xid][yid] == null) {
             this._isBeyondMap = true;
             return;
         }
 
-        this._grid[this._gridPosition.x][this._gridPosition.y]._isOccupied = false;
+        this._grid[this._gridPositionID.x][this._gridPositionID.y]._isOccupied = false;
 
-        this._gridPosition.x = x;
-        this._gridPosition.y = y;
+        this._gridPositionID.x = xid;
+        this._gridPositionID.y = yid;
 
-        this._x = this._grid[x][y].getPosition().x;
-        this._y = this._grid[x][y].getPosition().y;
+        this._x = this._grid[xid][yid].getPosition().x;
+        this._y = this._grid[xid][yid].getPosition().y;
         
-        this._grid[x][y]._isOccupied = true;
+        this._grid[xid][yid]._isOccupied = true;
     }
 
     public draw():void 
@@ -66,7 +63,7 @@ export default class ___Object
         
         if (this._shape == "circle") {
             ctx.beginPath();
-            ctx.fillStyle = "white";
+            ctx.fillStyle = "orange";
             ctx.arc(this._x + this._size, this._y + this._size, this._size, 0, Math.PI * 2, false);
             ctx.fill();
             ctx.closePath();

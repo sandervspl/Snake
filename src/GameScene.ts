@@ -132,21 +132,47 @@ export default class GameScene
     // spawn new candy randomly on field
     private spawnCandy():void
     {
-        var x = getRandomInt(0, this._gridWidth - 1),
-            y = getRandomInt(0, this._gridHeight - 1);
+        var freeNodes: GridNode[][] = [];
 
-        this._candy = new __Object(x, y, this._grid, this._gridSize / 2, "circle");
+        for (var x = 0, i = 0; x < this._gridWidth; x += 1) {
+            freeNodes[i] = [];
+
+            for (var y = 0, j = 0; y < this._gridHeight; y += 1) {
+                if (!this._grid[x][y]._isOccupied) {
+                    freeNodes[i][j] = this._grid[x][y];
+                    j += 1;
+                }
+            }
+
+            i += 1;
+        }
+
+        var x = getRandomInt(0, freeNodes.length - 1),
+            y = getRandomInt(0, freeNodes[x].length - 1);
+
+        if (!freeNodes[x][y]._isOccupied) {
+            var posxid = freeNodes[x][y].getPositionID().x,
+                posyid = freeNodes[x][y].getPositionID().y;
+        }
+
+        // console.log(posxid);
+        // console.log(posyid);
+        // console.log(freeNodes[x][y].getPositionID());
+
+        this._candy = new __Object(posxid, posyid, this._grid, this._gridSize / 2, "circle");
+
+        // console.log(this._candy.getGridPositionID());
     }
 
     // collision
     private collisionCheck():void
     {
-        var headX = this._snakeParts[0].getGridPosition().x,
-            headY = this._snakeParts[0].getGridPosition().y;
+        var headX = this._snakeParts[0].getGridPositionID().x,
+            headY = this._snakeParts[0].getGridPositionID().y;
 
         for (var i = 1; i < this._snakeParts.length; i += 1) {
-            var tailX = this._snakeParts[i].getGridPosition().x,
-                tailY = this._snakeParts[i].getGridPosition().y;
+            var tailX = this._snakeParts[i].getGridPositionID().x,
+                tailY = this._snakeParts[i].getGridPositionID().y;
 
             if (headX == tailX && headY == tailY) {
                 this._isDead = true;
@@ -154,8 +180,8 @@ export default class GameScene
         }
 
         if (this._candy != null) {
-            var candyX = this._candy.getGridPosition().x,
-                candyY = this._candy.getGridPosition().y;
+            var candyX = this._candy.getGridPositionID().x,
+                candyY = this._candy.getGridPositionID().y;
 
             if (headX == candyX && headY == candyY) {
                 this._candy = null;
@@ -197,11 +223,12 @@ export default class GameScene
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (this._showGrid) this.drawGrid();
+
         this._snakeMgr.updateSnake();
         this.collisionCheck();
 
         if (this._candy != null) this._candy.draw();
-        if (this._showGrid) this.drawGrid();
     }
 }
 

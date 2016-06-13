@@ -59,8 +59,8 @@ export default class SnakePart extends __Object
     {
         if (this._isHead) this._curDirection = this._nextDirection;
 
-        var x = this.getGridPosition().x,
-            y = this.getGridPosition().y;
+        var x = this.getGridPositionID().x,
+            y = this.getGridPositionID().y;
         
         switch (this._curDirection)
         {
