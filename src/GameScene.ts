@@ -17,13 +17,15 @@ export default class GameScene
     private _gridHeight: number;
     private _showGrid: boolean;
 
+    private _score: number;
+
     public _isDead: boolean;
 
     constructor()
     {
         this._showGrid = false;
 
-        this.setupCanvas();
+        this.setupScreen();
 
         if (this.createGrid()) {
             this.startGame();
@@ -36,7 +38,7 @@ export default class GameScene
     
     public getGrid():GridNode[][] { return this._grid; }
 
-    private setupCanvas():void
+    private setupScreen():void
     {
         canvas.width = 1000;
         canvas.height = 500;
@@ -44,6 +46,27 @@ export default class GameScene
         canvas.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
         canvas.style.top = window.innerHeight / 2 - canvas.height / 2 + "px";
         canvas.style.position = "absolute";
+
+        var score = document.getElementById("score");
+        score.style.left = window.innerWidth / 2 - ctx.measureText("100").width + "px";
+        score.style.top = "40px";
+        score.style.position = "absolute";
+
+        var highscore = document.getElementById("highscore");
+        highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
+        highscore.style.top = "40px";
+        highscore.style.position = "absolute";
+
+        this.setupScore();
+    }
+
+    private setupScore():void
+    {
+        var score = document.getElementById("score");
+        score.innerHTML = String(this._score);
+
+        var highscore = document.getElementById("highscore");
+        highscore.innerHTML = "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
     }
 
     private createGrid():boolean
@@ -94,6 +117,8 @@ export default class GameScene
 
     private keyboardInput(event: KeyboardEvent):any
     {
+        event.preventDefault();
+
         // G
         if (event.keyCode == 71) this._showGrid = (this._showGrid) ? false : true;
 
@@ -116,6 +141,7 @@ export default class GameScene
             }
         }
 
+        this._score = 0;
         this._snakeParts = [];
         this._candy = null;
         this._loop = null;
@@ -125,6 +151,8 @@ export default class GameScene
         this.addEventHandlers();
         this.init();
         this.spawnCandy();
+
+        this.setupScore();
 
         this.update();
     }
@@ -184,15 +212,30 @@ export default class GameScene
                 candyY = this._candy.getGridPositionID().y;
 
             if (headX == candyX && headY == candyY) {
+                this.updateScore();
+
                 this._candy = null;
                 this.spawnCandy();
                 this._snakeMgr.addTail();
             }
         }
     }
+
+    private updateScore():void
+    {
+        this._score += 10;
+
+        var score = document.getElementById("score");
+        if (score) {
+            score.innerHTML = String(this._score);
+        }
+    }
     
     private gameOver():void
     {
+        var hs = localStorage.getItem("snake_highscore");
+        if (this._score > hs) localStorage.setItem("snake_highscore", String(this._score));
+
         ctx.font = "60px Verdana";
         ctx.fillStyle = "red";
         ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
@@ -223,12 +266,12 @@ export default class GameScene
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (this._showGrid) this.drawGrid();
-
         this._snakeMgr.updateSnake();
         this.collisionCheck();
 
         if (this._candy != null) this._candy.draw();
+
+        if (this._showGrid) this.drawGrid();
     }
 }
 

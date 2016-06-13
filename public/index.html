@@ -8,12 +8,22 @@
             width:  100%;
             height: 100%;
             margin: 0;
+            background-color: lightgrey;
         }
+
         canvas { display:block; }
+
+        #score, #highscore {
+            font-family: Arial, serif, sans-serif;
+            font-size: 40px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
-<canvas id="canvas" width="1280" height="700" style="background-color: #835139"></canvas>
+<div id="highscore"></div>
+<div id="score">0</div>
+<canvas id="canvas" width="1280" height="700" style="background-color: lightslategray"></canvas>
 <script src="<%= buildLocation %>/game.js"></script>
 </body>
 </html>

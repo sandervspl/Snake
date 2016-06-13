@@ -27,7 +27,7 @@ export default class GridNode
     
     public draw():void
     {
-        var fillColor = (this._isOccupied) ? 'green' : 'black';
+        var fillColor = (this._isOccupied) ? 'lightgreen' : 'black';
         var lineWidth = (this._isOccupied) ? 3 : 1;
         
         ctx.beginPath();
