@@ -15,11 +15,14 @@ export default class GameScene
     private _gridSize: number;
     private _gridWidth: number;
     private _gridHeight: number;
+    private _showGrid: boolean;
 
     public _isDead: boolean;
 
     constructor()
     {
+        this._showGrid = false;
+
         this.setupCanvas();
         this.createGrid();
         this.startGame();
@@ -85,9 +88,13 @@ export default class GameScene
 
     private keyboardInput(event: KeyboardEvent):any
     {
-        if (!this._isDead) return;
+        // G
+        if (event.keyCode == 71) this._showGrid = (this._showGrid) ? false : true;
 
+        // R
         if (event.keyCode == 82) {
+            if (!this._isDead) return;
+
             this.startGame();
         }
 
@@ -155,7 +162,7 @@ export default class GameScene
         cancelAnimationFrame(this._loop);
     }
 
-    private updateGrid():void
+    private drawGrid():void
     {
         for (var i = 0; i < this._gridWidth; i += 1) {
             for (var j = 0; j < this._gridHeight; j += 1) {
@@ -182,8 +189,7 @@ export default class GameScene
         this.collisionCheck();
 
         if (this._candy != null) this._candy.draw();
-
-        this.updateGrid();
+        if (this._showGrid) this.drawGrid();
     }
 }
 
