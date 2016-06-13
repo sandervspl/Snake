@@ -24,8 +24,12 @@ export default class GameScene
         this._showGrid = false;
 
         this.setupCanvas();
-        this.createGrid();
-        this.startGame();
+
+        if (this.createGrid()) {
+            this.startGame();
+        } else {
+            console.error('ERROR: Unable to create grid for this canvas size and grid size combination.');
+        }
     }
     
     public getGridSize():number { return this._gridSize; }
@@ -36,27 +40,27 @@ export default class GameScene
     {
         canvas.width = 1000;
         canvas.height = 500;
+
         canvas.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
         canvas.style.top = window.innerHeight / 2 - canvas.height / 2 + "px";
         canvas.style.position = "absolute";
     }
 
-    private createGrid():void
+    private createGrid():boolean
     {
         this._grid = [];
-
         this._gridSize = 50;
 
         var tries = 0;
         while (canvas.width % this._gridSize) {
             this._gridSize -= 0.5;
+            tries += 1;
 
-            if (tries > 1000) {
-                console.log('escaped');
-                break;
-            }
+            if (tries > 1000) break;
         }
 
+        if (canvas.width % this._gridSize ||
+            canvas.height % this._gridSize) return false;
 
         this._gridWidth = Math.round(canvas.width / this._gridSize);
         this._gridHeight = Math.round(canvas.height / this._gridSize);
@@ -70,6 +74,8 @@ export default class GameScene
                 this._grid[i][j] = new GridNode(this._gridSize, posId);
             }
         }
+
+        return true;
     }
 
     // initialize and add our first snake part to array

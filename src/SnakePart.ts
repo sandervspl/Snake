@@ -52,9 +52,6 @@ export default class SnakePart extends __Object
                 if (this._curDirection != Direction.DIR_RIGHT)
                     this._nextDirection = Direction.DIR_LEFT;
                 break;
-
-            default:
-                console.error('SnakePart::keyBoardInput defaulted');
         }
     }
 
