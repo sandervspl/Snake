@@ -58,7 +58,7 @@ export default class GameScene
         for (var i = 0; i < this._gridWidth; i += 1) {
             this._grid[i] = [];
 
-            for (var j = 1; j < this._gridHeight; j += 1) {
+            for (var j = 0; j < this._gridHeight; j += 1) {
                 var posId = {x: i, y: j};
                 
                 this._grid[i][j] = new GridNode(this._gridSize, posId);
@@ -113,11 +113,7 @@ export default class GameScene
         var size = this._gridSize / 2;
 
         var x = getRandomInt(0, this._gridWidth - 1),
-            y = getRandomInt(1, this._gridHeight - 1);
-
-        console.log(x);
-        console.log(y);
-        console.log("--");
+            y = getRandomInt(0, this._gridHeight - 1);
 
         var position = this._grid[x][y].getPosition();
 
@@ -174,7 +170,7 @@ export default class GameScene
     private updateGrid():void
     {
         for (var i = 0; i < this._gridWidth; i += 1) {
-            for (var j = 1; j < this._gridHeight; j += 1) {
+            for (var j = 0; j < this._gridHeight; j += 1) {
                 this._grid[i][j].draw();
             }
         }
