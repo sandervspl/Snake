@@ -25,10 +25,12 @@ export default class GridNode
     
     public draw():void
     {
+        var fillColor = (this._isOccupied) ? 'green' : 'black';
+        var lineWidth = (this._isOccupied) ? 3 : 1;
+        
         ctx.beginPath();
-        ctx.lineWidth = 3.0;
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.0;
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = fillColor;
         ctx.strokeRect(
             this._Position.x,
             this._Position.y,

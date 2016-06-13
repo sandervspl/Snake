@@ -110,6 +110,12 @@ export default class GameScene
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        for (var i = 0; i < this._gridWidth; i += 1) {
+            for (var j = 0; j < this._gridHeight; j += 1) {
+                this._grid[i][j]._isOccupied = false;
+            }
+        }
+
         this._snakeParts = [];
         this._candy = null;
         this._loop = null;

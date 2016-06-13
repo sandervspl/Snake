@@ -17,8 +17,10 @@ export default class ___Object
         this._grid = grid;
         this._gridPosition = { x: x, y: y };
 
-        this._x = this._grid[x][y].getPosition().x;
-        this._y = this._grid[x][y].getPosition().y;
+        this.setPosition(x, y);
+
+        // this._x = this._grid[x][y].getPosition().x;
+        // this._y = this._grid[x][y].getPosition().y;
 
         this._size = size;
         this._shape = shape;
@@ -42,11 +44,15 @@ export default class ___Object
             return;
         }
 
+        this._grid[this._gridPosition.x][this._gridPosition.y]._isOccupied = false;
+
         this._gridPosition.x = x;
         this._gridPosition.y = y;
 
         this._x = this._grid[x][y].getPosition().x;
         this._y = this._grid[x][y].getPosition().y;
+        
+        this._grid[x][y]._isOccupied = true;
     }
 
     public draw():void 
