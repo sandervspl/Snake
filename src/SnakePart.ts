@@ -1,5 +1,6 @@
 import __Object from "./Object";
 import {Direction} from "./defines";
+import GridNode from "./GridNode";
 
 export default class SnakePart extends __Object
 {
@@ -8,9 +9,9 @@ export default class SnakePart extends __Object
     public _curDirection: Direction;       // direction each snake individual part should go to (up, down, left or right)
     public _nextDirection: Direction;      // button presses are saved into this variable and compared to curdirection
     
-    constructor(x: number, y: number, size: number, direction: Direction, isHead: boolean)
+    constructor(x: number, y: number, grid: GridNode[][], size: number, direction: Direction, isHead: boolean)
     {
-        super(x, y, size, "rect");
+        super(x, y, grid, size, "rect");
         
         this._isHead = isHead;
         this._curDirection = direction;
@@ -61,25 +62,25 @@ export default class SnakePart extends __Object
     {
         if (this._isHead) this._curDirection = this._nextDirection;
 
-        var x = this.getPositionX(),
-            y = this.getPositionY();
+        var x = this.getGridPosition().x,
+            y = this.getGridPosition().y;
         
         switch (this._curDirection)
         {
             case Direction.DIR_UP:
-                y -= this.getSize();
+                y -= 1;
                 break;
 
             case Direction.DIR_RIGHT:
-                x += this.getSize();
+                x += 1;
                 break;
             
             case Direction.DIR_DOWN:
-                y += this.getSize();
+                y += 1;
                 break;
 
             case Direction.DIR_LEFT:
-                x -= this.getSize();
+                x -= 1;
                 break;
         }
 

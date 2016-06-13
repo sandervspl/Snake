@@ -28,27 +28,27 @@ export default class SnakeMgr
         switch (direction)
         {
             case Direction.DIR_UP:
-                x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() + this._snakeParts[last].getSize();
+                x = this._snakeParts[last].getGridPosition().x;
+                y = this._snakeParts[last].getGridPosition().y + 1;
                 break;
 
             case Direction.DIR_RIGHT:
-                x = this._snakeParts[last].getPositionX() - this._snakeParts[last].getSize();
-                y = this._snakeParts[last].getPositionY();
+                x = this._snakeParts[last].getGridPosition().x - 1;
+                y = this._snakeParts[last].getGridPosition().y;
                 break;
 
             case Direction.DIR_DOWN:
-                x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() - this._snakeParts[last].getSize();
+                x = this._snakeParts[last].getGridPosition().x;
+                y = this._snakeParts[last].getGridPosition().y - 1;
                 break;
 
             case Direction.DIR_LEFT:
-                x = this._snakeParts[last].getPositionX() + this._snakeParts[last].getSize();
-                y = this._snakeParts[last].getPositionY();
+                x = this._snakeParts[last].getGridPosition().x + 1;
+                y = this._snakeParts[last].getGridPosition().y;
                 break;
         }
 
-        var tail = new SnakePart(x, y, this._game.getGridSize(), direction, false);
+        var tail = new SnakePart(x, y, this._game.getGrid(), this._game.getGridSize(), direction, false);
         this._snakeParts.push(tail);
     }
 

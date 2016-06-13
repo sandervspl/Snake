@@ -8,7 +8,6 @@ export default class GameScene
 {
     private _snakeParts: SnakePart[];   // every snake part that is on the field
     private _candy: __Object;           // randomly added candy on field
-    private _isDead: boolean;
     private _snakeMgr: SnakeMgr;
     private _loop: any;
 
@@ -16,6 +15,8 @@ export default class GameScene
     private _gridSize: number;
     private _gridWidth: number;
     private _gridHeight: number;
+
+    public _isDead: boolean;
 
     constructor()
     {
@@ -25,6 +26,8 @@ export default class GameScene
     }
     
     public getGridSize():number { return this._gridSize; }
+    
+    public getGrid():GridNode[][] { return this._grid; }
 
     private setupCanvas():void
     {
@@ -72,9 +75,9 @@ export default class GameScene
         var x = Math.round(this._gridWidth / 2),
             y = Math.round(this._gridHeight / 2);
 
-        var position = this._grid[x][y].getPosition();
+        // var position = this._grid[x][y].getPosition();
 
-        var head = new SnakePart(position.x, position.y, this._gridSize, Direction.DIR_RIGHT, true);
+        var head = new SnakePart(x, y, this._grid, this._gridSize, Direction.DIR_RIGHT, true);
         this._snakeParts.push(head);
     }
 
@@ -110,47 +113,32 @@ export default class GameScene
     // spawn new candy randomly on field
     private spawnCandy():void
     {
-        var size = this._gridSize / 2;
-
         var x = getRandomInt(0, this._gridWidth - 1),
             y = getRandomInt(0, this._gridHeight - 1);
 
-        var position = this._grid[x][y].getPosition();
-
-        x = position.x + size;
-        y = position.y + size;
-
-        this._candy = new __Object(x, y, this._gridSize / 2, "circle");
+        this._candy = new __Object(x, y, this._grid, this._gridSize / 2, "circle");
     }
 
     // collision
     private collisionCheck():void
     {
-        var head = this._snakeParts[0],
-            ax1 = head.getPositionX(),
-            ax2 = head.getPositionX() + head.getSize(),
-            ay1 = head.getPositionY(),
-            ay2 = head.getPositionY() + head.getSize();
+        var headX = this._snakeParts[0].getGridPosition().x,
+            headY = this._snakeParts[0].getGridPosition().y;
 
         for (var i = 1; i < this._snakeParts.length; i += 1) {
-            var tail = this._snakeParts[i];
-            bx1 = tail.getPositionX();
-            bx2 = tail.getPositionX() + tail.getSize();
-            by1 = tail.getPositionY();
-            by2 = tail.getPositionY() + tail.getSize();
+            var tailX = this._snakeParts[i].getGridPosition().x,
+                tailY = this._snakeParts[i].getGridPosition().y;
 
-            if (isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2)) {
+            if (headX == tailX && headY == tailY) {
                 this._isDead = true;
             }
         }
 
         if (this._candy != null) {
-            var bx1 = this._candy.getPositionX(),
-                bx2 = this._candy.getPositionX() + this._candy.getSize(),
-                by1 = this._candy.getPositionY(),
-                by2 = this._candy.getPositionY() + this._candy.getSize();
+            var candyX = this._candy.getGridPosition().x,
+                candyY = this._candy.getGridPosition().y;
 
-            if (isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2)) {
+            if (headX == candyX && headY == candyY) {
                 this._candy = null;
                 this.spawnCandy();
                 this._snakeMgr.addTail();
@@ -181,6 +169,8 @@ export default class GameScene
     {
         this._loop = requestAnimationFrame( () => this.update() );
 
+        if (this._snakeParts[0]._isBeyondMap) this._isDead = true;
+
         if (this._isDead) {
             this.gameOver();
             return;
@@ -198,15 +188,6 @@ export default class GameScene
 }
 
 
-
-// check collision between two rectangles
-function isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2):boolean
-{
-    return  ax1 < bx2 &&
-            ax2 > bx1 &&
-            ay1 < by2 &&
-            ay2 > by1;
-}
 
 function getRandomInt(min:number , max:number):number
 {

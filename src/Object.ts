@@ -1,31 +1,52 @@
 import {ctx} from "./Defines";
+import GridNode from "./GridNode";
 
 export default class ___Object
 {
     private _x: number;
     private _y: number;
+    private _gridPosition: {x: number, y: number};
+    private _grid: GridNode[][];
     private _size: number;
     private _shape: string;
+
+    public _isBeyondMap: boolean;
     
-    constructor(x: number, y: number, size: number, shape: string)
+    constructor(x: number, y: number, grid: GridNode[][], size: number, shape: string)
     {
-        this._x = x;
-        this._y = y;
+        this._grid = grid;
+        this._gridPosition = { x: x, y: y };
+
+        this._x = this._grid[x][y].getPosition().x;
+        this._y = this._grid[x][y].getPosition().y;
+
         this._size = size;
         this._shape = shape;
+
+        this._isBeyondMap = false;
     }
     
     public getPositionX():number { return this._x; }
 
     public getPositionY():number { return this._y; }
 
+    public getGridPosition() { return this._gridPosition; }
+
     public getSize():number { return this._size; }
 
     // set position of unit
     public setPosition(x: number, y: number):void
     {
-        this._x = Math.floor(x);
-        this._y = Math.floor(y);
+        if (this._grid[x] == null || this._grid[x][y] == null) {
+            this._isBeyondMap = true;
+            return;
+        }
+
+        this._gridPosition.x = x;
+        this._gridPosition.y = y;
+
+        this._x = this._grid[x][y].getPosition().x;
+        this._y = this._grid[x][y].getPosition().y;
     }
 
     public draw():void 
@@ -40,7 +61,7 @@ export default class ___Object
         if (this._shape == "circle") {
             ctx.beginPath();
             ctx.fillStyle = "white";
-            ctx.arc(this._x, this._y, this._size, 0, Math.PI * 2, false);
+            ctx.arc(this._x + this._size, this._y + this._size, this._size, 0, Math.PI * 2, false);
             ctx.fill();
             ctx.closePath();
         }

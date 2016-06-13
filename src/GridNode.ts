@@ -6,6 +6,8 @@ export default class GridNode
     private _PositionID: { x: number, y: number };
     private _gridSize: number;
     
+    public _isOccupied: boolean;
+    
     constructor(gridSize: number, positionID: {x:number, y:number})
     {
         this._gridSize = gridSize;
@@ -15,6 +17,8 @@ export default class GridNode
             x: gridSize * this._PositionID.x, 
             y: gridSize * this._PositionID.y
         };
+        
+        this._isOccupied = false;
     }
     
     public getPosition():{x:number, y:number} { return this._Position; }
