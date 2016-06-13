@@ -85,10 +85,4 @@ export default class SnakePart extends __Object
 
         this.setPosition(x, y);
     }
-    
-    public update():void
-    {
-        this.updatePosition();
-        this.draw();
-    }
 }

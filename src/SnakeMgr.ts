@@ -55,12 +55,12 @@ export default class SnakeMgr
             diff    = curTime - this._lastUpdateTime,
             prevDir = this._snakeParts[0]._curDirection;
 
-        if (diff > this._updateTime) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // update snake and tail positions according to direction
+        for (var i = 0; i < this._snakeParts.length; i += 1)
+        {
+            this._snakeParts[i].draw();
 
-            // update snake and tail positions according to direction
-            for (var i = 0; i < this._snakeParts.length; i += 1)
-            {
+            if (diff > this._updateTime) {
                 // update their direction flag, given from previous tail or head when i == 1
                 if (i > 0) {
                     // save current direction
@@ -73,10 +73,10 @@ export default class SnakeMgr
                     prevDir = dir;
                 }
 
-                this._snakeParts[i].update();
+                this._snakeParts[i].updatePosition();
             }
-
-            this._lastUpdateTime = curTime;
         }
+
+        if (diff > this._updateTime) this._lastUpdateTime = curTime;
     }
 }

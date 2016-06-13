@@ -2,6 +2,7 @@ import SnakePart from "./SnakePart";
 import {ctx, canvas, Direction} from "./defines";
 import __Object from "./Object";
 import SnakeMgr from "./SnakeMgr";
+import GridNode from "./GridNode";
 
 export default class GameScene
 {
@@ -11,9 +12,56 @@ export default class GameScene
     private _snakeMgr: SnakeMgr;
     private _loop: any;
 
+    private _grid: GridNode[][];
+    private _gridSize: number;
+    private _gridWidth: number;
+    private _gridHeight: number;
+
     constructor()
     {
+        this.setupCanvas();
+        this.createGrid();
         this.startGame();
+    }
+
+    private setupCanvas():void
+    {
+        canvas.width = 1000;
+        canvas.height = 500;
+        canvas.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
+        canvas.style.top = window.innerHeight / 2 - canvas.height / 2 + "px";
+        canvas.style.position = "absolute";
+    }
+
+    private createGrid():void
+    {
+        this._grid = [];
+
+        this._gridSize = 50;
+
+        var tries = 0;
+        while (canvas.width % this._gridSize) {
+            this._gridSize -= 0.5;
+
+            if (tries > 1000) {
+                console.log('escaped');
+                break;
+            }
+        }
+
+
+        this._gridWidth = Math.round(canvas.width / this._gridSize);
+        this._gridHeight = Math.round(canvas.height / this._gridSize);
+
+        for (var i = 0; i < this._gridWidth; i += 1) {
+            this._grid[i] = [];
+
+            for (var j = 0; j < this._gridHeight; j += 1) {
+                var posId = {x: i, y: j};
+                
+                this._grid[i][j] = new GridNode(this._gridSize, posId);
+            }
+        }
     }
 
     // initialize and add our first snake part to array
@@ -105,6 +153,15 @@ export default class GameScene
         cancelAnimationFrame(this._loop);
     }
 
+    private updateGrid():void
+    {
+        for (var i = 0; i < this._gridWidth; i += 1) {
+            for (var j = 0; j < this._gridHeight; j += 1) {
+                this._grid[i][j].draw();
+            }
+        }
+    }
+
     // update sprites
     private update():void
     {
@@ -115,6 +172,9 @@ export default class GameScene
             return;
         }
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        this.updateGrid();
         this._snakeMgr.updateSnake();
         this.collisionCheck();
 
