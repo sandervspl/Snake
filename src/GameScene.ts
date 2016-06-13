@@ -1,63 +1,19 @@
 import SnakePart from "./SnakePart";
 import {ctx, canvas, Direction} from "./defines";
 import __Object from "./Object";
+import SnakeMgr from "./SnakeMgr";
 
 export default class GameScene
 {
-    private _snakeParts:SnakePart[] = [];   // every snake part that is on the field
-    private _lastUpdateTime: number;        // last time we updated canvas
-    private _updateTime: number;            // time difference between updates
-    private _candy: __Object;               // randomly added candy on field
-    private isDead: boolean;
+    private _snakeParts: SnakePart[];   // every snake part that is on the field
+    private _candy: __Object;           // randomly added candy on field
+    private _isDead: boolean;
+    private _snakeMgr: SnakeMgr;
+    private _loop: any;
 
     constructor()
     {
-        this._lastUpdateTime = Date.now();
-        this._updateTime = 100;             // .25 seconds
-
-        this.isDead = false;
-
-        this.addEventHandlers();
-        this.init();
-        this.spawnCandy();
-
-        this.update();
-    }
-
-    // add keyboard event handlers
-    private addEventHandlers():void { window.addEventListener('keydown', (e)=> { this.keyboardInput(e) }); }
-
-    // update direction flags with keyboard input
-    private keyboardInput(event: KeyboardEvent):any
-    {
-        var head = this._snakeParts[0];
-
-        switch (event.keyCode)
-        {
-            case 38:
-            case 87:
-                if (head._direction != Direction.DIR_DOWN)
-                    head._direction = Direction.DIR_UP;
-                break;
-
-            case 39:
-            case 68:
-                if (head._direction != Direction.DIR_LEFT)
-                    head._direction = Direction.DIR_RIGHT;
-                break;
-
-            case 40:
-            case 83:
-                if (head._direction != Direction.DIR_UP)
-                    head._direction = Direction.DIR_DOWN;
-                break;
-
-            case 37:
-            case 65:
-                if (head._direction != Direction.DIR_RIGHT)
-                    head._direction = Direction.DIR_LEFT;
-                break;
-        }
+        this.startGame();
     }
 
     // initialize and add our first snake part to array
@@ -66,8 +22,37 @@ export default class GameScene
         var x = canvas.width / 2,
             y = canvas.height / 2;
 
-        var head = new SnakePart(x, y, Direction.DIR_RIGHT);
+        var head = new SnakePart(x, y, Direction.DIR_RIGHT, true);
         this._snakeParts.push(head);
+    }
+
+    private addEventHandlers():void { window.addEventListener('keydown', (e)=> { this.keyboardInput(e) }); }
+
+    private keyboardInput(event: KeyboardEvent):any
+    {
+        if (!this._isDead) return;
+
+        if (event.keyCode == 82) {
+            this.startGame();
+        }
+
+    }
+
+    private startGame():void
+    {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        this._snakeParts = [];
+        this._candy = null;
+        this._loop = null;
+        this._isDead = false;
+        this._snakeMgr = new SnakeMgr(this._snakeParts);
+
+        this.addEventHandlers();
+        this.init();
+        this.spawnCandy();
+
+        this.update();
     }
 
     // spawn new candy randomly on field
@@ -77,41 +62,6 @@ export default class GameScene
             y = Math.random() * (canvas.height - this._snakeParts[0].getSprite().height);
 
         this._candy = new __Object(x, y, "images/candy.png");
-    }
-
-    // add new tail according to last snake part's direction
-    private spawnTail():void
-    {
-        var x = 0,
-            y = 0,
-            last = this._snakeParts.length - 1,
-            direction = this._snakeParts[last]._direction;
-
-        switch (this._snakeParts[last]._direction)
-        {
-            case Direction.DIR_UP:
-                x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() + this._snakeParts[last].getSprite().height;
-                break;
-
-            case Direction.DIR_RIGHT:
-                x = this._snakeParts[last].getPositionX() - this._snakeParts[last].getSprite().width;
-                y = this._snakeParts[last].getPositionY();
-                break;
-
-            case Direction.DIR_DOWN:
-                x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() - this._snakeParts[last].getSprite().height;
-                break;
-
-            case Direction.DIR_LEFT:
-                x = this._snakeParts[last].getPositionX() + this._snakeParts[last].getSprite().width;
-                y = this._snakeParts[last].getPositionY();
-                break;
-        }
-
-        var tail = new SnakePart(x, y, direction);
-        this._snakeParts.push(tail);
     }
 
     // collision
@@ -131,7 +81,7 @@ export default class GameScene
         if (isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2)) {
             this._candy = null;
             this.spawnCandy();
-            this.spawnTail();
+            this._snakeMgr.addTail();
         }
 
         for (var i = 1; i < this._snakeParts.length; i += 1) {
@@ -142,64 +92,40 @@ export default class GameScene
             by2 = tail.getPositionY() + tail.getSprite().height;
 
             if (isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2)) {
-                this.isDead = true;
+                this._isDead = true;
             }
         }
     }
-
-    private updateSnake():void
+    
+    private gameOver():void
     {
-        var curTime = Date.now(),
-            diff    = curTime - this._lastUpdateTime,
-            prevDir = this._snakeParts[0]._direction;
+        ctx.font = "60px Verdana";
+        ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
 
-        if (diff > this._updateTime) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // update snake and tail positions according to direction
-            for (var i = 0; i < this._snakeParts.length; i += 1)
-            {
-                this._snakeParts[i].update();
-
-                // update their direction flag, given from previous tail (or head when i == 1)
-                if (i > 0) {
-                    // save current direction
-                    var dir = this._snakeParts[i]._direction;
-
-                    // add previous direction to current tail
-                    this._snakeParts[i]._direction = prevDir;
-
-                    // add saved direction to variable, so we can give it to the next tail
-                    prevDir = dir;
-                }
-            }
-
-            this._lastUpdateTime = curTime;
-        }
+        cancelAnimationFrame(this._loop);
     }
 
     // update sprites
     private update():void
     {
-        requestAnimationFrame(() => this.update());
+        this._loop = requestAnimationFrame( () => this.update() );
 
-        if (this.isDead) {
-            ctx.font = "60px Verdana";
-            ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
+        if (this._isDead) {
+            this.gameOver();
             return;
         }
 
-        this.updateSnake();
+        this._snakeMgr.updateSnake();
         this.collisionCheck();
 
-        if (this._candy != null) this._candy.update();
+        if (this._candy != null) this._candy.draw();
     }
 }
 
 
 
 // check collision between two rectangles
-export function isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2):boolean
+function isCollision(ax1, ax2, ay1, ay2, bx1, bx2, by1, by2):boolean
 {
     return  ax1 < bx2 &&
             ax2 > bx1 &&

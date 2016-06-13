@@ -1,4 +1,5 @@
 import {ctx} from "./defines";
+
 export default class ___Object 
 {
     private _x: number;
@@ -30,7 +31,8 @@ export default class ___Object
         this._y = Math.floor(y);
     }
 
-    private draw():void { ctx.drawImage(this._sprite, this._x, this._y); }
-
-    public update():void { this.draw(); }
+    public draw():void 
+    { 
+        ctx.drawImage(this._sprite, this._x, this._y); 
+    }
 }
