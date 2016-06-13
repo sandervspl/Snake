@@ -1,14 +1,17 @@
 import SnakePart from "./SnakePart";
-import {Direction, ctx, canvas} from "./Defines";
+import {Direction} from "./Defines";
+import GameScene from "./GameScene";
 
 export default class SnakeMgr
 {
     private _snakeParts: SnakePart[];
     private _lastUpdateTime: number;        // last time we updated canvas
     private _updateTime: number;            // time difference between updates
+    private _game: GameScene;
     
-    constructor(snakeParts: SnakePart[])
+    constructor(game: GameScene, snakeParts: SnakePart[])
     {
+        this._game = game;
         this._snakeParts = snakeParts;
         this._lastUpdateTime = Date.now();
         this._updateTime = 150;             // .15 seconds
@@ -26,26 +29,26 @@ export default class SnakeMgr
         {
             case Direction.DIR_UP:
                 x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() + this._snakeParts[last].getSprite().height;
+                y = this._snakeParts[last].getPositionY() + this._snakeParts[last].getSize();
                 break;
 
             case Direction.DIR_RIGHT:
-                x = this._snakeParts[last].getPositionX() - this._snakeParts[last].getSprite().width;
+                x = this._snakeParts[last].getPositionX() - this._snakeParts[last].getSize();
                 y = this._snakeParts[last].getPositionY();
                 break;
 
             case Direction.DIR_DOWN:
                 x = this._snakeParts[last].getPositionX();
-                y = this._snakeParts[last].getPositionY() - this._snakeParts[last].getSprite().height;
+                y = this._snakeParts[last].getPositionY() - this._snakeParts[last].getSize();
                 break;
 
             case Direction.DIR_LEFT:
-                x = this._snakeParts[last].getPositionX() + this._snakeParts[last].getSprite().width;
+                x = this._snakeParts[last].getPositionX() + this._snakeParts[last].getSize();
                 y = this._snakeParts[last].getPositionY();
                 break;
         }
 
-        var tail = new SnakePart(x, y, direction, false);
+        var tail = new SnakePart(x, y, this._game.getGridSize(), direction, false);
         this._snakeParts.push(tail);
     }
 

@@ -4,13 +4,13 @@ import {Direction} from "./defines";
 export default class SnakePart extends __Object
 {
     private _isHead: boolean;
+    
     public _curDirection: Direction;       // direction each snake individual part should go to (up, down, left or right)
     public _nextDirection: Direction;      // button presses are saved into this variable and compared to curdirection
     
-    constructor(x: number, y: number, direction: Direction, isHead: boolean)
+    constructor(x: number, y: number, size: number, direction: Direction, isHead: boolean)
     {
-        var sprite = "images/tail.png";
-        super(x, y, sprite);
+        super(x, y, size, "rect");
         
         this._isHead = isHead;
         this._curDirection = direction;
@@ -67,19 +67,19 @@ export default class SnakePart extends __Object
         switch (this._curDirection)
         {
             case Direction.DIR_UP:
-                y -= this.getSprite().height;
+                y -= this.getSize();
                 break;
 
             case Direction.DIR_RIGHT:
-                x += this.getSprite().width;
+                x += this.getSize();
                 break;
             
             case Direction.DIR_DOWN:
-                y += this.getSprite().height;
+                y += this.getSize();
                 break;
 
             case Direction.DIR_LEFT:
-                x -= this.getSprite().width;
+                x -= this.getSize();
                 break;
         }
 

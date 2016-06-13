@@ -1,28 +1,25 @@
-import {ctx} from "./defines";
+import {ctx} from "./Defines";
 
-export default class ___Object 
+export default class ___Object
 {
     private _x: number;
     private _y: number;
-    private _sprite: HTMLImageElement;
+    private _size: number;
+    private _shape: string;
     
-    constructor(x: number, y: number, sprite: string)
+    constructor(x: number, y: number, size: number, shape: string)
     {
         this._x = x;
         this._y = y;
-        this.loadSprite(sprite);
+        this._size = size;
+        this._shape = shape;
     }
     
     public getPositionX():number { return this._x; }
 
     public getPositionY():number { return this._y; }
-    
-    public getSprite():HTMLImageElement { return this._sprite; }
 
-    private loadSprite(src):void {
-        this._sprite = new Image();
-        this._sprite.src = src;
-    }
+    public getSize():number { return this._size; }
 
     // set position of unit
     public setPosition(x: number, y: number):void
@@ -32,7 +29,20 @@ export default class ___Object
     }
 
     public draw():void 
-    { 
-        ctx.drawImage(this._sprite, this._x, this._y); 
+    {
+        if (this._shape == "rect") {
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.fillRect(this._x, this._y, this._size, this._size);
+            ctx.closePath();
+        }
+        
+        if (this._shape == "circle") {
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.arc(this._x, this._y, this._size, 0, Math.PI * 2, false);
+            ctx.fill();
+            ctx.closePath();
+        }
     }
 }

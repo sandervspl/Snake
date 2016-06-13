@@ -17,6 +17,8 @@ export default class GridNode
         };
     }
     
+    public getPosition():{x:number, y:number} { return this._Position; }
+    
     public draw():void
     {
         ctx.beginPath();
