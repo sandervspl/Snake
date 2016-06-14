@@ -77,7 +77,9 @@ export default class GameScene
     private createGrid():boolean
     {
         this._grid = [];
-        this._gridSize = 50;
+
+        var size = 50;
+        this._gridSize = size;
 
         var tries = 0;
         while (canvas.width % this._gridSize) {
@@ -85,7 +87,7 @@ export default class GameScene
                 this._gridSize -= 0.5;
                 tries += 1;
             } else if (tries >= 500 && tries < 1000) {
-                if (this._gridSize < 50) this._gridSize += 50;
+                if (this._gridSize < size) this._gridSize = size;
                 this._gridSize += 0.5;
                 tries += 1;
             } else {
