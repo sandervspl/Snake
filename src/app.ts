@@ -1,10 +1,4 @@
 import GameScene from './GameScene'
-import {canvas} from './Defines'
 
-// START
-// adjust canvas size to screen
-canvas.width  = window.innerWidth;
-canvas.height = window.innerHeight;
-
-// initialize and start game scene
+// initialize and start game
 var gameScene = new GameScene();
