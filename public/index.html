@@ -9,21 +9,26 @@
             height: 100%;
             margin: 0;
             background-color: lightgrey;
+            font-family: Arial, serif, sans-serif;
+            line-height: 10px;
         }
 
         canvas { display:block; }
 
         #score, #highscore {
-            font-family: Arial, serif, sans-serif;
             font-size: 40px;
-            margin: auto;
         }
     </style>
 </head>
 <body>
-<div id="highscore"></div>
-<div id="score">0</div>
 <canvas id="canvas" width="1280" height="700" style="background-color: lightslategray"></canvas>
+<div id="highscore"></div>
+<div id="score"></div>
+<div id="controls">
+    <h1>Controls</h1>
+    <p>WASD / Arrow Keys = move</p>
+    <p>G = toggle grid</p>
+</div>
 <script src="<%= buildLocation %>/game.js"></script>
 </body>
 </html>

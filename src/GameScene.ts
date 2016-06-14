@@ -48,14 +48,19 @@ export default class GameScene
         canvas.style.position = "absolute";
 
         var score = document.getElementById("score");
-        score.style.left = window.innerWidth / 2 - ctx.measureText("100").width + "px";
-        score.style.top = "40px";
+        score.style.left = window.innerWidth / 2 + "px";
+        score.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
         score.style.position = "absolute";
 
         var highscore = document.getElementById("highscore");
         highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
-        highscore.style.top = "40px";
+        highscore.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
         highscore.style.position = "absolute";
+
+        var controls = document.getElementById("controls");
+        controls.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
+        controls.style.top = window.innerHeight / 2 + canvas.height / 2  + 20 + "px";
+        controls.style.position = "absolute";
 
         this.setupScore();
     }
@@ -76,10 +81,16 @@ export default class GameScene
 
         var tries = 0;
         while (canvas.width % this._gridSize) {
-            this._gridSize -= 0.5;
-            tries += 1;
-
-            if (tries > 1000) break;
+            if (tries < 500) {
+                this._gridSize -= 0.5;
+                tries += 1;
+            } else if (tries >= 500 && tries < 1000) {
+                if (this._gridSize < 50) this._gridSize += 50;
+                this._gridSize += 0.5;
+                tries += 1;
+            } else {
+                break;
+            }
         }
 
         if (canvas.width % this._gridSize ||
@@ -101,18 +112,6 @@ export default class GameScene
         return true;
     }
 
-    // initialize and add our first snake part to array
-    private init():void
-    {
-        var x = Math.round(this._gridWidth / 2),
-            y = Math.round(this._gridHeight / 2);
-
-        // var position = this._grid[x][y].getPosition();
-
-        var head = new SnakePart(x, y, this._grid, this._gridSize, Direction.DIR_RIGHT, true);
-        this._snakeParts.push(head);
-    }
-
     private addEventHandlers():void { window.addEventListener('keydown', (e)=> { this.keyboardInput(e) }); }
 
     private keyboardInput(event: KeyboardEvent):any
@@ -128,7 +127,19 @@ export default class GameScene
 
             this.startGame();
         }
+    }
 
+    // initialize and add our first snake part to array
+    private init(count: number = 1):void
+    {
+        for (var i = 0; i < count; i += 1) {
+            var x      = Math.round(this._gridWidth / 2) - i,
+                y      = Math.round(this._gridHeight / 2),
+                isHead = (i > 0) ? false : true;
+
+            var snake = new SnakePart(x, y, this._grid, this._gridSize, Direction.DIR_RIGHT, isHead);
+            this._snakeParts.push(snake);
+        }
     }
 
     private startGame():void
@@ -149,7 +160,7 @@ export default class GameScene
         this._snakeMgr = new SnakeMgr(this, this._snakeParts);
 
         this.addEventHandlers();
-        this.init();
+        this.init(3);
         this.spawnCandy();
 
         this.setupScore();
@@ -178,13 +189,20 @@ export default class GameScene
         var x = getRandomInt(0, freeNodes.length - 1),
             y = getRandomInt(0, freeNodes[x].length - 1);
 
+        // hack fix for some rare undefined bug
+        if (freeNodes[x][y] == null) {
+            this.spawnCandy();
+            return;
+        }
+
         if (!freeNodes[x][y]._isOccupied) {
             var posxid = freeNodes[x][y].getPositionID().x,
                 posyid = freeNodes[x][y].getPositionID().y;
         }
 
-        // console.log(posxid);
-        // console.log(posyid);
+        // console.log(freeNodes);
+        // console.log('xid: ' + posxid);
+        // console.log('yid: ' + posyid);
         // console.log(freeNodes[x][y].getPositionID());
 
         this._candy = new __Object(posxid, posyid, this._grid, this._gridSize / 2, "circle");
@@ -236,9 +254,18 @@ export default class GameScene
         var hs = localStorage.getItem("snake_highscore");
         if (this._score > hs) localStorage.setItem("snake_highscore", String(this._score));
 
+        ctx.save();
+        ctx.globalAlpha = 0.4;
+        ctx.rect(0, canvas.height/3, canvas.width, canvas.height * 0.35);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.restore();
+
         ctx.font = "60px Verdana";
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "black";
         ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
+        ctx.font = "40px Verdana";
+        ctx.fillText("Press R to play again", canvas.width/2 - ctx.measureText("Press R to play again").width/2, canvas.height/2 + 50);
 
         cancelAnimationFrame(this._loop);
     }

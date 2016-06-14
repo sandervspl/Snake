@@ -57,7 +57,7 @@ export default class ___Object
         if (this._shape == "rect") {
             ctx.beginPath();
             ctx.fillStyle = "white";
-            ctx.fillRect(this._x, this._y, this._size, this._size);
+            ctx.fillRect(this._x, this._y, this._size * 0.98, this._size * 0.98);
             ctx.closePath();
         }
         
