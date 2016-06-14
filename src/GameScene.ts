@@ -25,6 +25,8 @@ export default class GameScene
     {
         this._showGrid = false;
 
+        this.addEventHandlers();
+
         this.setupScreen();
 
         if (this.createGrid()) {
@@ -118,15 +120,17 @@ export default class GameScene
 
     private keyboardInput(event: KeyboardEvent):any
     {
-        event.preventDefault();
-
         // G
-        if (event.keyCode == 71) this._showGrid = (this._showGrid) ? false : true;
+        if (event.keyCode == 71) {
+            event.preventDefault();
+            this._showGrid = (this._showGrid) ? false : true;
+        }
 
         // R
         if (event.keyCode == 82) {
             if (!this._isDead) return;
 
+            event.preventDefault();
             this.startGame();
         }
     }
@@ -135,8 +139,8 @@ export default class GameScene
     private init(count: number = 1):void
     {
         for (var i = 0; i < count; i += 1) {
-            var xid      = Math.round(this._gridWidth / 2) - i,
-                yid      = Math.round(this._gridHeight / 2),
+            var xid    = Math.round(this._gridWidth / 2) - i,
+                yid    = Math.round(this._gridHeight / 2),
                 isHead = (i > 0) ? false : true;
 
             var snake = new SnakePart(xid, yid, this._grid, this._gridSize, Direction.DIR_RIGHT, isHead);
@@ -161,7 +165,6 @@ export default class GameScene
         this._isDead = false;
         this._snakeMgr = new SnakeMgr(this, this._snakeParts);
 
-        this.addEventHandlers();
         this.init(3);
         this.spawnCandy();
 
