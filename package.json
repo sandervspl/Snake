@@ -1,7 +1,7 @@
 {
   "name": "tpb",
   "version": "0.0.1",
-  "description": "The binding of education is a 2d action adventure game",
+  "description": "Snake recreation in TypeScript",
   "main": "index.js",
   "scripts": {
     "start": "export NODE_ENV=production & node ./app.js",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oscaroox/TheBindingOfEducation.git"
+    "url": "git+https://github.com/sandervspl/Snake.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oscaroox/TheBindingOfEducation/issues"
+    "url": "https://github.com/sandervspl/Snake/issues"
   },
-  "homepage": "https://github.com/oscaroox/TheBindingOfEducation#readme",
+  "homepage": "https://github.com/sandervspl/Snake#readme",
   "devDependencies": {
     "express": "^4.13.4",
     "ts-loader": "^0.8.2",
