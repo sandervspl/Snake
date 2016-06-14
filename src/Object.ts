@@ -9,6 +9,7 @@ export default class ___Object
     private _grid: GridNode[][];
     private _size: number;
     private _shape: string;
+    private _tick: number;
 
     public _isBeyondMap: boolean;
     
@@ -19,6 +20,7 @@ export default class ___Object
 
         this._size = size;
         this._shape = shape;
+        this._tick = 0;
 
         this._isBeyondMap = false;
 
@@ -62,9 +64,14 @@ export default class ___Object
         }
         
         if (this._shape == "circle") {
+            var baseRadius = { min: this._size * 0.95, max: this._size };
+            var osc = 0.5 + Math.sin(this._tick / 13);
+            var radius = baseRadius.min + ((baseRadius.max - baseRadius.min) * osc);
+            this._tick += 1;
+
             ctx.beginPath();
             ctx.fillStyle = "orange";
-            ctx.arc(this._x + this._size, this._y + this._size, this._size, 0, Math.PI * 2, false);
+            ctx.arc(this._x + this._size, this._y + this._size, radius, 0, Math.PI * 2, false);
             ctx.fill();
             ctx.closePath();
         }
