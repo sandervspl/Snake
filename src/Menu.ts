@@ -14,8 +14,8 @@ export default class Menu
 
         this._text = {
             title: "SNAKE",
-            sp: "Single Player",
-            mp: "Multiplayer"
+            sp: "Single-player",
+            mp: "Multi-player"
         };
 
         ctx.font = "40px Verdana";
@@ -69,7 +69,7 @@ export default class Menu
     private click(event: MouseEvent):void
     {
         if (this._game._hasGameStarted) return;
-        
+
         var btn = this.collision(event);
 
         if (btn) {

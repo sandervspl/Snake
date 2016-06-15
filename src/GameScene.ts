@@ -21,7 +21,7 @@ export default class GameScene
 
     private _isMultiplayer: boolean;
 
-    public _isDead: boolean;
+    public _isGameOver: boolean;
 
     constructor(isMultiplayer: boolean)
     {
@@ -128,7 +128,7 @@ export default class GameScene
 
         // R
         if (event.keyCode == 82) {
-            if (!this._isDead) return;
+            if (!this._isGameOver) return;
 
             event.preventDefault();
             this.startGame();
@@ -157,7 +157,7 @@ export default class GameScene
 
         this._score = 0;
         this._loop = null;
-        this._isDead = false;
+        this._isGameOver = false;
 
         this._snakeMgr = [];
 
@@ -276,7 +276,7 @@ export default class GameScene
                         tailYid = part.getGridPositionID().y;
 
                     // we hit a bodypart
-                    if (headXid == tailXid && headYid == tailYid) this._isDead = true;
+                    if (headXid == tailXid && headYid == tailYid) this._isGameOver = true;
                 }
             }
 
@@ -299,22 +299,23 @@ export default class GameScene
     // update sprites
     public update():void
     {
-        this._loop = requestAnimationFrame( () => this.update() );
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
+        this.collisionCheck();
+
         for (var i = 0; i < this._snakeMgr.length; i += 1) {
             this._snakeMgr[i].updateSnake();
         }
 
-        this.collisionCheck();
         if (this._candy != null) this._candy.draw();
         if (this._showGrid) this.drawGrid();
 
-        if (this._isDead) {
+        if (this._isGameOver) {
             this.gameOver();
             return;
         }
+
+        this._loop = requestAnimationFrame( () => this.update() );
     }
 }
 
