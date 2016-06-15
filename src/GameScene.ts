@@ -256,20 +256,31 @@ export default class GameScene
     private collisionCheck():void
     {
         for (var i = 0; i < this._snakeMgr.length; i += 1) {
-            var snakeParts = this._snakeMgr[i].getSnakeParts();
+            var snakeMgr   = this._snakeMgr[i],
+                snakeParts = snakeMgr.getSnakeParts();
 
-            var headXid = snakeParts[0].getGridPositionID().x,
-                headYid = snakeParts[0].getGridPositionID().y;
+            var headXid  = snakeParts[0].getGridPositionID().x,
+                headYid  = snakeParts[0].getGridPositionID().y,
+                playerID = snakeMgr.getPlayerID();
 
-            for (var j = 1; j < snakeParts.length; j += 1) {
-                var tailXid = snakeParts[j].getGridPositionID().x,
-                    tailYid = snakeParts[j].getGridPositionID().y;
+            // look through all bodies, even our own
+            for (var j = 0; j < this._snakeMgr.length; j += 1) {
+                for (var k = 0; k < this._snakeMgr[j].getSnakeParts().length; k += 1) {
+                    // skip our own head part
+                    if (k == 0 && playerID == this._snakeMgr[j].getPlayerID())
+                        continue;
 
-                if (headXid == tailXid && headYid == tailYid) {
-                    this._isDead = true;
+                    // look through body parts
+                    var part = this._snakeMgr[j].getSnakeParts()[k];
+                    var tailXid = part.getGridPositionID().x,
+                        tailYid = part.getGridPositionID().y;
+
+                    // we hit a bodypart
+                    if (headXid == tailXid && headYid == tailYid) this._isDead = true;
                 }
             }
 
+            // candy
             var candy = this._candy;
             if (candy != null) {
                 var candyXid = candy.getGridPositionID().x,

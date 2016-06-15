@@ -25,6 +25,8 @@ export default class SnakeMgr
     }
     
     public getSnakeParts():SnakePart[] { return this._snakeParts; }
+    
+    public getPlayerID(): number { return this._playerID; }
 
 
     private init(count: number = 1):void
