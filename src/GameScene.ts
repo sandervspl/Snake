@@ -162,6 +162,17 @@ export default class GameScene
 
     private keyboardInput(event: KeyboardEvent):any
     {
+        if (!this._game._hasGameStarted) return;
+
+        // ESCAPE
+        if (event.keyCode == 27) {
+            if (!this._isGameOver) return;
+
+            event.preventDefault();
+            cancelAnimationFrame(this._loop);
+            this._game.startMenu();
+        }
+
         // G
         if (event.keyCode == 71) {
             event.preventDefault();
@@ -189,6 +200,8 @@ export default class GameScene
 
     private startGame():void
     {
+        this._game.getMenu().cancelAnimFrame();     // hack fix
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var x = 0; x < this._gridWidth; x += 1) {
@@ -242,14 +255,7 @@ export default class GameScene
             var xid = freeNodes[x][y].getPositionID().x,
                 yid = freeNodes[x][y].getPositionID().y;
 
-            // console.log(freeNodes);
-            // console.log('xid: ' + xid);
-            // console.log('yid: ' + yid);
-            // console.log(freeNodes[x][y].getPositionID());
-
             this._candy = new __Object(xid, yid, this._grid, this._gridSize / 2, "circle", "orange");
-
-            // console.log(this._candy.getGridPositionID());
         } else {
             this.spawnCandy();
         }
@@ -266,13 +272,14 @@ export default class GameScene
         }
 
         // game over message
-        var msg  = (this._isMultiplayer) ? winner + " wins!" : "Game Over",
-            msg2 = "Press R to play again";
+        var msg  = (this._isMultiplayer) ? winner + " wins!" : "Game Over!",
+            msg2 = "Press R to play again",
+            msg3 = "Press ESCAPE to go to menu";
 
         // background
         ctx.save();
         ctx.globalAlpha = 0.4;
-        ctx.rect(0, canvas.height/3, canvas.width, canvas.height * 0.35);
+        ctx.rect(0, canvas.height/3, canvas.width, canvas.height * 0.4);
         ctx.fillStyle = "white";
         ctx.fill();
         ctx.restore();
@@ -281,8 +288,13 @@ export default class GameScene
         ctx.font = "60px Verdana";
         ctx.fillStyle = "black";
         ctx.fillText(msg, canvas.width/2 - ctx.measureText(msg).width/2, canvas.height/2);
-        ctx.font = "40px Verdana";
-        ctx.fillText(msg2, canvas.width/2 - ctx.measureText(msg2).width/2, canvas.height/2 + 50);
+
+        // Press R...
+        ctx.font = "30px Verdana";
+        ctx.fillText(msg2, canvas.width/2 - ctx.measureText(msg2).width/2, canvas.height/2 + 40);
+
+        // Press ESC...
+        ctx.fillText(msg3, canvas.width/2 - ctx.measureText(msg3).width/2, canvas.height/2 + 80);
 
         // high score tracking
         var item = "snake_highscore",
@@ -389,7 +401,7 @@ function errorMsg(className: string, methodName: string, ...text: string[]):void
 
     var msg = "ERROR! " + className + "::" + methodName + " | ";
     for (let t of text) {
-        msg += t + " "
+        msg += t + " ";
     }
     console.log(msg);
 }

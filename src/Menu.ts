@@ -137,19 +137,20 @@ export default class Menu
         if (this._game._hasGameStarted) return;
 
         var btn = this.collision(event);
-        console.log(btn);
-
         if (btn != -1) {
+            // sp button
             if (btn == 0) {
-                cancelAnimationFrame(this._loop);
+                cancelAnimationFrame(this._loop); // doesn't always work? Mid loop?
                 this._game.startSPGame();
             }
 
+            // mp button
             else if (btn == 1) {
                 cancelAnimationFrame(this._loop);
                 this._game.startMPGame();
             }
 
+            // difficulty button
             else {
                 this._game._difficulty = btn;
                 this._buttons[btn].color = "white";
@@ -202,13 +203,16 @@ export default class Menu
             ctx.closePath();
         }
     }
+    
+    // hack fix - does not properly cancel after second init inside this class for some reason
+    public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
     private update():void
     {
-        this._loop = requestAnimationFrame( () => this.update() );
-
         this.drawMenu();
         // this.drawHitbox();
+
+        this._loop = requestAnimationFrame( () => this.update() );
     }
 }
 

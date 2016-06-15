@@ -1,4 +1,4 @@
-import {canvas} from "./Defines";
+import {canvas, ctx} from "./Defines";
 import GameScene from "./GameScene";
 import Menu from "./Menu";
 
@@ -23,8 +23,10 @@ export default class Game
         this._debug = true;
 
         this.setupScreen();
-        this.drawMenu();
+        this.startMenu();
     }
+    
+    public getMenu():Menu { return this._menu; }
 
     private setupScreen():void
     {
@@ -41,22 +43,27 @@ export default class Game
         controls.style.position = "absolute";
     }
 
-    private drawMenu():void
+    public startMenu():void
     {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        this._hasGameStarted = false;
         this._menu = new Menu(this);
     }
 
     public startSPGame():void
     {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         this._hasGameStarted = true;
-        this._menu = null;
         this._gameScene = new GameScene(this, false);
     }
     
     public startMPGame():void
     {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         this._hasGameStarted = true;
-        this._menu = null;
         this._gameScene = new GameScene(this, true);
     }
 }
