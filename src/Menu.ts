@@ -23,7 +23,6 @@ export default class Menu
             sp: {
                 size: 40,
                 color: "black",
-                hovered: false,
                 x1: canvas.width/2 - ctx.measureText(this._text.sp).width/2,
                 y1: canvas.height/2 + 40,
                 x2: canvas.width/2 - ctx.measureText(this._text.sp).width/2 + ctx.measureText(this._text.sp).width,
@@ -33,7 +32,6 @@ export default class Menu
             mp: {
                 size: 40,
                 color: "black",
-                hovered: false,
                 x1: canvas.width/2 - ctx.measureText(this._text.mp).width/2,
                 y1: canvas.height/2 + 100,
                 x2: canvas.width/2 - ctx.measureText(this._text.mp).width/2 + ctx.measureText(this._text.mp).width,
@@ -70,6 +68,8 @@ export default class Menu
 
     private click(event: MouseEvent):void
     {
+        if (this._game._hasGameStarted) return;
+        
         var btn = this.collision(event);
 
         if (btn) {
@@ -78,7 +78,7 @@ export default class Menu
                 this._game.startSPGame();
             } else {
                 cancelAnimationFrame(this._loop);
-                // this._game.startMPGame();
+                this._game.startMPGame();
             }
         }
     }
@@ -96,13 +96,9 @@ export default class Menu
             by2 = this._buttons.sp.y2 - this._buttons.sp.size;
 
         if (isCollision(mx, my, bx1, bx2, by1, by2)) {
-            console.log('sp');
-            this._buttons.sp.hovered = true;
             this._buttons.sp.color = "white";
-
             return 1;
         } else {
-            this._buttons.sp.hovered = false;
             this._buttons.sp.color = "black";
         }
 
@@ -112,13 +108,9 @@ export default class Menu
         by2 = this._buttons.mp.y2 - this._buttons.mp.size;
 
         if (isCollision(mx, my, bx1, bx2, by1, by2)) {
-            console.log('mp');
-            this._buttons.mp.hovered = true;
             this._buttons.mp.color = "white";
-
             return 2;
         } else {
-            this._buttons.mp.hovered = false;
             this._buttons.mp.color = "black";
         }
 

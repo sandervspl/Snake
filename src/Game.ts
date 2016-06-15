@@ -4,9 +4,10 @@ import Menu from "./Menu";
 
 export default class Game
 {
-    private _hasGameStarted: boolean;
     private _gameScene: GameScene;
     private _menu: Menu;
+
+    public _hasGameStarted: boolean;
 
     constructor()
     {
@@ -41,12 +42,15 @@ export default class Game
 
     public startSPGame():void
     {
+        this._hasGameStarted = true;
         this._menu = null;
         this._gameScene = new GameScene();
     }
-
-    private update():void
+    
+    public startMPGame():void
     {
-        if (!this._hasGameStarted) this.drawMenu();
+        this._hasGameStarted = true;
+        this._menu = null;
+        // this._gameScene = new GameScene();
     }
 }
