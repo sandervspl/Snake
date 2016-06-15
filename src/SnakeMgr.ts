@@ -47,31 +47,28 @@ export default class SnakeMgr
     // add new tail according to last snake part's direction
     public addTail():void
     {
-        var x = 0,
-            y = 0,
-            last = this._snakeParts.length - 1,
-            direction = this._snakeParts[last]._curDirection;
+        var last      = this._snakeParts.length - 1;
+        var direction = this._snakeParts[last]._curDirection;
+
+        var x = this._snakeParts[last].getGridPositionID().x,
+            y = this._snakeParts[last].getGridPositionID().y;
 
         switch (direction)
         {
             case Direction.DIR_UP:
-                x = this._snakeParts[last].getGridPositionID().x;
-                y = this._snakeParts[last].getGridPositionID().y + 1;
+                y += 1;
                 break;
 
             case Direction.DIR_RIGHT:
-                x = this._snakeParts[last].getGridPositionID().x - 1;
-                y = this._snakeParts[last].getGridPositionID().y;
+                x -= 1;
                 break;
 
             case Direction.DIR_DOWN:
-                x = this._snakeParts[last].getGridPositionID().x;
-                y = this._snakeParts[last].getGridPositionID().y - 1;
+                y -= 1;
                 break;
 
             case Direction.DIR_LEFT:
-                x = this._snakeParts[last].getGridPositionID().x + 1;
-                y = this._snakeParts[last].getGridPositionID().y;
+                x += 1;
                 break;
         }
 
@@ -91,7 +88,7 @@ export default class SnakeMgr
             this._snakeParts[i].draw();
 
             if (diff > this._updateTime) {
-                // update their direction flag, given from previous tail or head when i == 1
+                // update their direction flag, given from previous snake part
                 if (i > 0) {
                     // save current direction
                     var dir = this._snakeParts[i]._curDirection;

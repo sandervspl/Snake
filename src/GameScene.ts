@@ -304,17 +304,17 @@ export default class GameScene
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         for (var i = 0; i < this._snakeMgr.length; i += 1) {
-            if (this._isDead) {
-                this.gameOver();
-                return;
-            }
-
             this._snakeMgr[i].updateSnake();
         }
 
         this.collisionCheck();
         if (this._candy != null) this._candy.draw();
         if (this._showGrid) this.drawGrid();
+
+        if (this._isDead) {
+            this.gameOver();
+            return;
+        }
     }
 }
 
