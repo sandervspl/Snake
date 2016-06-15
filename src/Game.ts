@@ -48,22 +48,27 @@ export default class Game
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         this._hasGameStarted = false;
+        this._gameScene = null;
         this._menu = new Menu(this);
     }
 
     public startSPGame():void
     {
+        console.log('start sp game: ' + Date.now());
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         this._hasGameStarted = true;
+        this._gameScene = null;
         this._gameScene = new GameScene(this, false);
     }
     
     public startMPGame():void
     {
+        console.log('start mp game: ' + Date.now());
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         this._hasGameStarted = true;
+        this._gameScene = null;
         this._gameScene = new GameScene(this, true);
     }
 }

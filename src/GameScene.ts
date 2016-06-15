@@ -139,8 +139,8 @@ export default class GameScene
             }
         }
 
-        if (canvas.width % this._gridSize ||
-            canvas.height % this._gridSize) return false;
+        if (canvas.width % this._gridSize || canvas.height % this._gridSize)
+            return false;
 
         this._gridWidth = Math.round(canvas.width / this._gridSize);
         this._gridHeight = Math.round(canvas.height / this._gridSize);
@@ -158,7 +158,7 @@ export default class GameScene
         return true;
     }
 
-    private addEventHandlers():void { window.addEventListener('keydown', (e)=> { this.keyboardInput(e) }); }
+    private addEventHandlers():void { window.addEventListener('keyup', (e)=> { this.keyboardInput(e) }); }
 
     private keyboardInput(event: KeyboardEvent):any
     {
@@ -167,24 +167,23 @@ export default class GameScene
         // ESCAPE
         if (event.keyCode == 27) {
             if (!this._isGameOver) return;
-
-            event.preventDefault();
+            
             cancelAnimationFrame(this._loop);
             this._game.startMenu();
         }
 
         // G
         if (event.keyCode == 71) {
-            event.preventDefault();
             this._showGrid = (this._showGrid) ? false : true;
         }
 
         // R
         if (event.keyCode == 82) {
             if (!this._isGameOver) return;
-
-            event.preventDefault();
+            
+            cancelAnimationFrame(this._loop);
             this.startGame();
+            // this._game.startSPGame();
         }
     }
 
@@ -200,6 +199,7 @@ export default class GameScene
 
     private startGame():void
     {
+        this._loop = null;
         this._game.getMenu().cancelAnimFrame();     // hack fix
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -211,8 +211,6 @@ export default class GameScene
         }
 
         this._score = 0;
-
-        this._loop = null;
         this._isGameOver = false;
 
         this._snakeMgr = [];
@@ -221,6 +219,8 @@ export default class GameScene
         this.init();
         this.spawnCandy();
         this.update();
+
+        console.log('startgame');
     }
 
     // spawn new candy randomly on field
