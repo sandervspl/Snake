@@ -40,6 +40,8 @@ export default class GameScene
         }
     }
     
+    public getGame():Game { return this._game; }
+    
     public getGridSize():number { return this._gridSize; }
     
     public getGridWH() {
@@ -103,7 +105,7 @@ export default class GameScene
 
     private updateScore():void
     {
-        this._score += 10;
+        this._score += 10 * (this._game._difficulty - 1);
 
         var el = "score",
             score = document.getElementById(el),
@@ -180,7 +182,7 @@ export default class GameScene
     {
         var players = (this._isMultiplayer) ? 2 : 1;
         for (var i = 0; i < players; i += 1) {
-            var snakeMgr = new SnakeMgr(this, (i) ? "black" : "white", i);
+            var snakeMgr = new SnakeMgr(this, (i) ? "Black" : "White", i);
             this._snakeMgr.push(snakeMgr);
         }
     }
@@ -256,16 +258,18 @@ export default class GameScene
     private gameOver():void
     {
         var winner = "No one";
-
-        for (var i = 0; i < this._snakeMgr.length; i += 1) {
-            var index = (i > 0) ? 0 : 1;
-            if (this._snakeMgr[i]._isDead) winner = this._snakeMgr[index].getColor();
+        if (this._isMultiplayer) {
+            for (var i = 0; i < this._snakeMgr.length; i += 1) {
+                var index = (i > 0) ? 0 : 1;
+                if (this._snakeMgr[i]._isDead) winner = this._snakeMgr[index].getColor();
+            }
         }
 
         // game over message
         var msg  = (this._isMultiplayer) ? winner + " wins!" : "Game Over",
             msg2 = "Press R to play again";
 
+        // background
         ctx.save();
         ctx.globalAlpha = 0.4;
         ctx.rect(0, canvas.height/3, canvas.width, canvas.height * 0.35);
@@ -273,6 +277,7 @@ export default class GameScene
         ctx.fill();
         ctx.restore();
 
+        // game over text
         ctx.font = "60px Verdana";
         ctx.fillStyle = "black";
         ctx.fillText(msg, canvas.width/2 - ctx.measureText(msg).width/2, canvas.height/2);

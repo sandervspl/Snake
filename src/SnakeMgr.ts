@@ -7,7 +7,7 @@ export default class SnakeMgr
     private _snakeParts: SnakePart[];
     private _lastUpdateTime: number;        // last time we updated canvas
     private _updateTime: number;            // time difference between updates
-    private _game: GameScene;
+    private _gameScene: GameScene;
     private _color: string;
     private _playerID: number;
     
@@ -15,10 +15,12 @@ export default class SnakeMgr
     
     constructor(game: GameScene, color: string, playerID: number)
     {
-        this._game = game;
+        this._gameScene = game;
         this._snakeParts = [];
         this._lastUpdateTime = Date.now();
-        this._updateTime = 250;             // .25 seconds
+
+        var diff = this._gameScene.getGame()._difficulty - 1;
+        this._updateTime = 250 / diff;
         
         this._color = color;
         this._playerID = playerID;
@@ -38,14 +40,14 @@ export default class SnakeMgr
     private init(count: number = 1):void
     {
         for (var i = 0; i < count; i += 1) {
-            var xid       = (this._playerID == 1) ? -3 + Math.round(this._game.getGridWH().width / 2) + i : 3 + Math.round(this._game.getGridWH().width / 2) - i,
+            var xid       = (this._playerID == 1) ? -3 + Math.round(this._gameScene.getGridWH().width / 2) + i : 3 + Math.round(this._gameScene.getGridWH().width / 2) - i,
                 // xid       = 3 - i,
-                yid       = Math.round(this._game.getGridWH().height / 2),
+                yid       = Math.round(this._gameScene.getGridWH().height / 2),
                 // yid       = 5,
                 isHead    = (i > 0) ? false : true,
                 direction = (this._playerID == 1) ? Direction.DIR_LEFT : Direction.DIR_RIGHT;
 
-            var tail = new SnakePart(xid, yid, this._game.getGrid(), this._game.getGridSize(), direction, isHead, this._playerID);
+            var tail = new SnakePart(xid, yid, this._gameScene.getGrid(), this._gameScene.getGridSize(), direction, isHead, this._playerID);
             this._snakeParts.push(tail);
         }
     }
@@ -78,7 +80,7 @@ export default class SnakeMgr
                 break;
         }
 
-        var tail = new SnakePart(x, y, this._game.getGrid(), this._game.getGridSize(), direction, false, this._playerID);
+        var tail = new SnakePart(x, y, this._gameScene.getGrid(), this._gameScene.getGridSize(), direction, false, this._playerID);
         this._snakeParts.push(tail);
     }
 
@@ -109,7 +111,7 @@ export default class SnakeMgr
                 if (!this._snakeParts[i].updatePosition())
                     this._isDead = true;
 
-                if (this._snakeParts[0]._isBeyondMap) this._game._isGameOver = true;
+                if (this._snakeParts[0]._isBeyondMap) this._gameScene._isGameOver = true;
             }
         }
 

@@ -6,6 +6,8 @@ export default class Game
 {
     private _gameScene: GameScene;
     private _menu: Menu;
+    
+    public _difficulty: number;
 
     public _hasGameStarted: boolean;
     public _debug: boolean;
@@ -15,6 +17,8 @@ export default class Game
         this._hasGameStarted = false;
         this._gameScene = null;
         this._menu = null;
+        
+        this._difficulty = 2; // 2, 3, 4
         
         this._debug = true;
 

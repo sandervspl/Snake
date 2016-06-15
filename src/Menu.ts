@@ -4,41 +4,16 @@ import Game from "./Game";
 export default class Menu
 {
     private _loop: any;
-    private _text: any;
-    private _buttons: any;
+    private _buttons: any[];
     private _game: Game;
 
     constructor(game: Game)
     {
         this._game = game;
 
-        this._text = {
-            title: "SNAKE",
-            sp: "Single-player",
-            mp: "Multi-player"
-        };
+        this._buttons = [];
 
-        ctx.font = "40px Verdana";
-        this._buttons = {
-            sp: {
-                size: 40,
-                color: "black",
-                x1: canvas.width/2 - ctx.measureText(this._text.sp).width/2,
-                y1: canvas.height/2 + 40,
-                x2: canvas.width/2 - ctx.measureText(this._text.sp).width/2 + ctx.measureText(this._text.sp).width,
-                y2: canvas.height/2 + 40 + 40
-            },
-
-            mp: {
-                size: 40,
-                color: "black",
-                x1: canvas.width/2 - ctx.measureText(this._text.mp).width/2,
-                y1: canvas.height/2 + 100,
-                x2: canvas.width/2 - ctx.measureText(this._text.mp).width/2 + ctx.measureText(this._text.mp).width,
-                y2: canvas.height/2 + 100 + 40
-            }
-        };
-
+        this.addButtons();
         this.addEventHandlers();
         this.update();
     }
@@ -48,6 +23,93 @@ export default class Menu
         canvas.addEventListener("mousemove", (e)=> { this.collision(e) });
         canvas.addEventListener("mousedown", (e)=> { this.click(e) });
     }
+
+    private addButtons():void
+    {
+        var x1, y1, x2, y2;
+        var fontSize = 40;
+
+        ctx.font = fontSize + "px Verdana";
+
+        var text = {
+            title: "SNAKE",
+            sp: "Single-player",
+            mp: "Multi-player",
+            opts_easy: "Slow",
+            opts_medium: "Faster",
+            opts_hard: "Fastest"
+        };
+
+        x1 = canvas.width/2 - ctx.measureText(text.sp).width/2;
+        y1 = canvas.height/2 + fontSize;
+        x2 = x1 + ctx.measureText(text.sp).width;
+        y2 = y1 + fontSize;
+        this._buttons[0] = {
+            size: 40,
+            color: "black",
+            text: text.sp,
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        };
+
+        x1 = canvas.width/2 - ctx.measureText(text.mp).width/2;
+        y1 = canvas.height/2 + fontSize * 2.25;
+        x2 = x1 + ctx.measureText(text.mp).width;
+        y2 = y1 + fontSize;
+        this._buttons[1] = {
+            size: 40,
+            color: "black",
+            text: "Multi-player",
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        };
+
+        x1 = canvas.width/2 - ctx.measureText(text.opts_easy).width/2 - ctx.measureText(text.opts_medium).width * 1.5;
+        y1 = canvas.height/2 + 200;
+        x2 = x1 + ctx.measureText(text.opts_easy).width;
+        y2 = y1 + fontSize;
+        this._buttons[2] = {
+            size: 40,
+            color: "black",
+            text: "Slow",
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        };
+
+        x1 = canvas.width/2 - ctx.measureText(text.opts_medium).width/2;
+        y1 = canvas.height/2 + 200;
+        x2 = x1 + ctx.measureText(text.opts_medium).width;
+        y2 = y1 + fontSize;
+        this._buttons[3] = {
+            size: 40,
+            color: "black",
+            text: "Faster",
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        };
+
+        x1 = canvas.width/2 - ctx.measureText(text.opts_hard).width/2 + ctx.measureText(text.opts_medium).width * 1.5;
+        y1 = canvas.height/2 + 200;
+        x2 = x1 + ctx.measureText(text.opts_hard).width;
+        y2 = y1 + fontSize;
+        this._buttons[4] = {
+            size: 40,
+            color: "black",
+            text: "Fastest",
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        };
+    }
     
     private drawMenu():void
     {
@@ -55,15 +117,19 @@ export default class Menu
 
         ctx.font = "80px Verdana";
         ctx.fillStyle = "black";
-        ctx.fillText(this._text.title, canvas.width/2 - ctx.measureText(this._text.title).width/2, canvas.height/2 - 80);
+        ctx.fillText("SNAKE", canvas.width/2 - ctx.measureText("SNAKE").width/2, canvas.height/2 - 80);
 
-        ctx.font = this._buttons.sp.size + "px Verdana";
-        ctx.fillStyle = this._buttons.sp.color;
-        ctx.fillText(this._text.sp, this._buttons.sp.x1, this._buttons.sp.y1);
+        for (var i = 0; i < this._buttons.length; i += 1) {
+            var btn = this._buttons[i];
 
-        ctx.font = this._buttons.mp.size + "px Verdana";
-        ctx.fillStyle = this._buttons.mp.color;
-        ctx.fillText(this._text.mp, this._buttons.mp.x1, this._buttons.mp.y1);
+            if (i == this._game._difficulty) {
+                btn.color = "white";
+            }
+
+            ctx.font = btn.size + "px Verdana";
+            ctx.fillStyle = btn.color;
+            ctx.fillText(btn.text, btn.x1, btn.y1);
+        }
     }
 
     private click(event: MouseEvent):void
@@ -71,75 +137,70 @@ export default class Menu
         if (this._game._hasGameStarted) return;
 
         var btn = this.collision(event);
+        console.log(btn);
 
-        if (btn) {
-            if (btn == 1) {
+        if (btn != -1) {
+            if (btn == 0) {
                 cancelAnimationFrame(this._loop);
                 this._game.startSPGame();
-            } else {
+            }
+
+            else if (btn == 1) {
                 cancelAnimationFrame(this._loop);
                 this._game.startMPGame();
+            }
+
+            else {
+                this._game._difficulty = btn;
+                this._buttons[btn].color = "white";
             }
         }
     }
 
     private collision(event: MouseEvent):number
     {
-        var rect = canvas.getBoundingClientRect();
+        var rect = canvas.getBoundingClientRect(),
+            mx   = event.clientX - rect.left,
+            my   = event.clientY - rect.top;
 
-        var mx = event.clientX - rect.left,
-            my = event.clientY - rect.top;
+        var result = -1;
 
-        var bx1 = this._buttons.sp.x1,
-            by1 = this._buttons.sp.y1 - this._buttons.sp.size,
-            bx2 = this._buttons.sp.x2,
-            by2 = this._buttons.sp.y2 - this._buttons.sp.size;
+        for (var i = 0; i < this._buttons.length; i += 1) {
+            var btn = this._buttons[i];
 
-        if (isCollision(mx, my, bx1, bx2, by1, by2)) {
-            this._buttons.sp.color = "white";
-            return 1;
-        } else {
-            this._buttons.sp.color = "black";
+            var bx1 = btn.x1,
+                by1 = btn.y1 - btn.size,
+                bx2 = btn.x2,
+                by2 = btn.y2 - btn.size;
+
+            if (isCollision(mx, my, bx1, bx2, by1, by2)) {
+                btn.color = "white";
+                return i;
+            } else {
+                btn.color = "black";
+            }
         }
 
-        bx1 = this._buttons.mp.x1;
-        by1 = this._buttons.mp.y1 - this._buttons.mp.size;
-        bx2 = this._buttons.mp.x2;
-        by2 = this._buttons.mp.y2 - this._buttons.mp.size;
-
-        if (isCollision(mx, my, bx1, bx2, by1, by2)) {
-            this._buttons.mp.color = "white";
-            return 2;
-        } else {
-            this._buttons.mp.color = "black";
-        }
-
-        return 0;
+        return result;
     }
 
     private drawHitbox():void
     {
         ctx.lineWidth = 1.0;
 
-        ctx.beginPath();
-        ctx.strokeStyle = "red";
-        ctx.strokeRect(
-            this._buttons.sp.x1,
-            this._buttons.sp.y1,
-            this._buttons.sp.x2 - this._buttons.sp.x1,
-            this._buttons.sp.y1 - this._buttons.sp.y2
-        );
-        ctx.closePath();
+        for (var i = 0; i < this._buttons.length; i += 1) {
+            var btn = this._buttons[i];
 
-        ctx.beginPath();
-        ctx.strokeStyle = "orange";
-        ctx.strokeRect(
-            this._buttons.mp.x1,
-            this._buttons.mp.y1,
-            this._buttons.mp.x2 - this._buttons.mp.x1,
-            this._buttons.mp.y1 - this._buttons.mp.y2
-        );
-        ctx.closePath();
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(
+                btn.x1,
+                btn.y1,
+                btn.x2 - btn.x1,
+                btn.y1 - btn.y2
+            );
+            ctx.closePath();
+        }
     }
 
     private update():void
