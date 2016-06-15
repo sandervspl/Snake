@@ -42,13 +42,6 @@ export default class GameScene
 
     private setupScreen():void
     {
-        canvas.width = 1000;
-        canvas.height = 500;
-
-        canvas.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
-        canvas.style.top = window.innerHeight / 2 - canvas.height / 2 + "px";
-        canvas.style.position = "absolute";
-
         var score = document.getElementById("score");
         score.style.left = window.innerWidth / 2 + "px";
         score.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
@@ -58,11 +51,6 @@ export default class GameScene
         highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
         highscore.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
         highscore.style.position = "absolute";
-
-        var controls = document.getElementById("controls");
-        controls.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
-        controls.style.top = window.innerHeight / 2 + canvas.height / 2  + 20 + "px";
-        controls.style.position = "absolute";
 
         this.setupScore();
     }
@@ -285,7 +273,7 @@ export default class GameScene
     }
 
     // update sprites
-    private update():void
+    public update():void
     {
         this._loop = requestAnimationFrame( () => this.update() );
 

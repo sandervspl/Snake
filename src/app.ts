@@ -1,4 +1,4 @@
-import GameScene from './GameScene'
+import Game from './Game'
 
 // initialize and start game
-var gameScene = new GameScene();
+var game = new Game();

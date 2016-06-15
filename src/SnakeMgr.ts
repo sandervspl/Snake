@@ -14,7 +14,7 @@ export default class SnakeMgr
         this._game = game;
         this._snakeParts = snakeParts;
         this._lastUpdateTime = Date.now();
-        this._updateTime = 100;             // .10 seconds
+        this._updateTime = 150;             // .10 seconds
     }
 
     // add new tail according to last snake part's direction
