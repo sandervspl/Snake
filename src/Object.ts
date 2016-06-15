@@ -9,17 +9,19 @@ export default class ___Object
     private _grid: GridNode[][];
     private _size: number;
     private _shape: string;
+    private _color: string;
     private _tick: number;
 
     public _isBeyondMap: boolean;
     
-    constructor(xid: number, yid: number, grid: GridNode[][], size: number, shape: string)
+    constructor(xid: number, yid: number, grid: GridNode[][], size: number, shape: string, color: string)
     {
         this._grid = grid;
         this._gridPositionID = { x: xid, y: yid };
 
         this._size = size;
         this._shape = shape;
+        this._color = color;
         this._tick = 0;
 
         this._isBeyondMap = false;
@@ -54,11 +56,11 @@ export default class ___Object
         this._grid[xid][yid]._isOccupied = true;
     }
 
-    public draw():void 
+    public draw():void
     {
         if (this._shape == "rect") {
             ctx.beginPath();
-            ctx.fillStyle = "white";
+            ctx.fillStyle = this._color;
             ctx.fillRect(this._x, this._y, this._size * 0.98, this._size * 0.98);
             ctx.closePath();
         }
@@ -70,7 +72,7 @@ export default class ___Object
             this._tick += 1;
 
             ctx.beginPath();
-            ctx.fillStyle = "orange";
+            ctx.fillStyle = this._color;
             ctx.arc(this._x + this._size, this._y + this._size, radius, 0, Math.PI * 2, false);
             ctx.fill();
             ctx.closePath();

@@ -44,13 +44,13 @@ export default class Game
     {
         this._hasGameStarted = true;
         this._menu = null;
-        this._gameScene = new GameScene();
+        this._gameScene = new GameScene(false);
     }
     
     public startMPGame():void
     {
         this._hasGameStarted = true;
         this._menu = null;
-        // this._gameScene = new GameScene();
+        this._gameScene = new GameScene(true);
     }
 }
