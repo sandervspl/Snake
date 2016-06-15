@@ -11,6 +11,8 @@ export default class SnakeMgr
     private _color: string;
     private _playerID: number;
     
+    public _isDead: boolean;
+    
     constructor(game: GameScene, color: string, playerID: number)
     {
         this._game = game;
@@ -21,12 +23,16 @@ export default class SnakeMgr
         this._color = color;
         this._playerID = playerID;
         
+        this._isDead = false;
+        
         this.init(3);
     }
     
     public getSnakeParts():SnakePart[] { return this._snakeParts; }
     
     public getPlayerID(): number { return this._playerID; }
+    
+    public getColor(): string { return this._color; }
 
 
     private init(count: number = 1):void
@@ -100,7 +106,8 @@ export default class SnakeMgr
                     prevDir = dir;
                 }
 
-                this._snakeParts[i].updatePosition();
+                if (!this._snakeParts[i].updatePosition())
+                    this._isDead = true;
 
                 if (this._snakeParts[0]._isBeyondMap) this._game._isGameOver = true;
             }

@@ -255,14 +255,16 @@ export default class GameScene
     
     private gameOver():void
     {
-        var item = "snake_highscore",
-            hs   = localStorage.getItem(item);
+        var winner = "No one";
 
-        if (hs) {
-            if (this._score > hs) localStorage.setItem(item, String(this._score));
-        } else {
-            errorMsg("GameScene", "gameOver", "Could not find localStorage item. Given: " + item);
+        for (var i = 0; i < this._snakeMgr.length; i += 1) {
+            var index = (i > 0) ? 0 : 1;
+            if (this._snakeMgr[i]._isDead) winner = this._snakeMgr[index].getColor();
         }
+
+        // game over message
+        var msg  = (this._isMultiplayer) ? winner + " wins!" : "Game Over",
+            msg2 = "Press R to play again";
 
         ctx.save();
         ctx.globalAlpha = 0.4;
@@ -273,9 +275,19 @@ export default class GameScene
 
         ctx.font = "60px Verdana";
         ctx.fillStyle = "black";
-        ctx.fillText("Game Over", canvas.width/2 - ctx.measureText("Game Over").width/2, canvas.height/2);
+        ctx.fillText(msg, canvas.width/2 - ctx.measureText(msg).width/2, canvas.height/2);
         ctx.font = "40px Verdana";
-        ctx.fillText("Press R to play again", canvas.width/2 - ctx.measureText("Press R to play again").width/2, canvas.height/2 + 50);
+        ctx.fillText(msg2, canvas.width/2 - ctx.measureText(msg2).width/2, canvas.height/2 + 50);
+
+        // high score tracking
+        var item = "snake_highscore",
+            hs   = localStorage.getItem(item);
+
+        if (hs) {
+            if (this._score > hs) localStorage.setItem(item, String(this._score));
+        } else {
+            errorMsg("GameScene", "gameOver", "Could not find localStorage item. Given: " + item);
+        }
 
         cancelAnimationFrame(this._loop);
     }
@@ -313,7 +325,10 @@ export default class GameScene
                         tailYid = part.getGridPositionID().y;
 
                     // we hit a bodypart
-                    if (headXid == tailXid && headYid == tailYid) this._isGameOver = true;
+                    if (headXid == tailXid && headYid == tailYid) {
+                        snakeMgr._isDead = true;
+                        this._isGameOver = true;
+                    }
                 }
             }
 
@@ -366,7 +381,7 @@ function getRandomInt(min:number, max:number):number
 function errorMsg(className: string, methodName: string, ...text: string[]):void
 {
     if (!this._game._debug) return;
-    
+
     var msg = "ERROR! " + className + "::" + methodName + " | ";
     for (let t of text) {
         msg += t + " "

@@ -86,7 +86,7 @@ export default class SnakePart extends __Object
         }
     }
 
-    public updatePosition():void
+    public updatePosition():boolean
     {
         if (this._isHead) this._curDirection = this._nextDirection;
 
@@ -112,6 +112,6 @@ export default class SnakePart extends __Object
                 break;
         }
 
-        this.setPosition(x, y);
+        return this.setPosition(x, y);
     }
 }

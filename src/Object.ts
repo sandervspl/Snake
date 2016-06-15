@@ -38,11 +38,11 @@ export default class ___Object
 
     public getSize():number { return this._size; }
 
-    public setPosition(xid: number, yid: number):void
+    public setPosition(xid: number, yid: number):boolean
     {
         if (this._grid[xid] == null || this._grid[xid][yid] == null) {
             this._isBeyondMap = true;
-            return;
+            return false;
         }
 
         this._grid[this._gridPositionID.x][this._gridPositionID.y]._isOccupied = false;
@@ -54,6 +54,8 @@ export default class ___Object
         this._y = this._grid[xid][yid].getPosition().y;
         
         this._grid[xid][yid]._isOccupied = true;
+        
+        return true;
     }
 
     public draw():void
