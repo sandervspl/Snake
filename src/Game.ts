@@ -8,16 +8,18 @@ export default class Game
     private _menu: Menu;
 
     public _hasGameStarted: boolean;
+    public _debug: boolean;
 
     constructor()
     {
         this._hasGameStarted = false;
         this._gameScene = null;
         this._menu = null;
+        
+        this._debug = true;
 
         this.setupScreen();
         this.drawMenu();
-        // this.startGame();
     }
 
     private setupScreen():void
@@ -44,13 +46,13 @@ export default class Game
     {
         this._hasGameStarted = true;
         this._menu = null;
-        this._gameScene = new GameScene(false);
+        this._gameScene = new GameScene(this, false);
     }
     
     public startMPGame():void
     {
         this._hasGameStarted = true;
         this._menu = null;
-        this._gameScene = new GameScene(true);
+        this._gameScene = new GameScene(this, true);
     }
 }

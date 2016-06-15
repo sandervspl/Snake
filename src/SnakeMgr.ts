@@ -102,7 +102,7 @@ export default class SnakeMgr
 
                 this._snakeParts[i].updatePosition();
 
-                if (this._snakeParts[0]._isBeyondMap) this._game._isDead = true;
+                if (this._snakeParts[0]._isBeyondMap) this._game._isGameOver = true;
             }
         }
 

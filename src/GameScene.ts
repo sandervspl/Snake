@@ -2,13 +2,13 @@ import {ctx, canvas} from "./defines";
 import __Object from "./Object";
 import SnakeMgr from "./SnakeMgr";
 import GridNode from "./GridNode";
-import ___Object from "./Object";
-
+import Game from "./Game";
 export default class GameScene
 {
-    // private _snakeParts: SnakePart[][];   // every snake part that is on the field
+    private _game: Game;
     private _candy: __Object;           // randomly added candy on field
     private _snakeMgr: SnakeMgr[];
+
     private _loop: any;
 
     private _grid: GridNode[][];
@@ -18,24 +18,25 @@ export default class GameScene
     private _showGrid: boolean;
 
     private _score: number;
-
     private _isMultiplayer: boolean;
 
     public _isGameOver: boolean;
 
-    constructor(isMultiplayer: boolean)
+    constructor(game: Game, isMultiplayer: boolean)
     {
+        this._game = game;
+
         this._isMultiplayer = isMultiplayer;
         this._showGrid = false;
 
         this.addEventHandlers();
 
-        this.setupScreen();
+        if (!this._isMultiplayer) this.setupScreen();
 
         if (this.createGrid()) {
             this.startGame();
         } else {
-            console.error('ERROR: Unable to create grid for this canvas size and grid size combination.');
+            errorMsg("GameScene", "constructor", "Unable to create grid for this canvas size and grid size combination.");
         }
     }
     
@@ -50,30 +51,69 @@ export default class GameScene
     
     public getGrid():GridNode[][] { return this._grid; }
 
-    public getCandy():___Object { return this._candy; }
-
     private setupScreen():void
     {
-        var score = document.getElementById("score");
-        score.style.left = window.innerWidth / 2 + "px";
-        score.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
-        score.style.position = "absolute";
+        var offsetY = 25;
 
+        var el    = "score",
+            score = document.getElementById(el),
+            error = "Could not find element! Given: ";
+
+        if (score) {
+            score.style.left = window.innerWidth / 2 + "px";
+            score.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
+            score.style.position = "absolute";
+        } else {
+            errorMsg("GameScene", "setupScreen", error + el);
+        }
+
+        el = "highscore";
         var highscore = document.getElementById("highscore");
-        highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
-        highscore.style.top = window.innerHeight / 2 - canvas.height / 2  - 40 + "px";
-        highscore.style.position = "absolute";
 
-        this.setupScore();
+        if (highscore) {
+            highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
+            highscore.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
+            highscore.style.position = "absolute";
+        } else {
+            errorMsg("GameScene", "setupScreen", error + el);
+        }
     }
 
     private setupScore():void
     {
-        var score = document.getElementById("score");
-        score.innerHTML = String(this._score);
+        var el    = "score",
+            score = document.getElementById(el),
+            error = "Could not find element! Given: ";
 
+        if (score) {
+            score.innerHTML = String(this._score);
+        } else {
+            errorMsg("GameScene", "setupScore", error + el);
+        }
+
+        el = "highscore";
         var highscore = document.getElementById("highscore");
-        highscore.innerHTML = "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
+
+        if (highscore) {
+            highscore.innerHTML = "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
+        } else {
+            errorMsg("GameScene", "setupScore", error + el);
+        }
+    }
+
+    private updateScore():void
+    {
+        this._score += 10;
+
+        var el = "score",
+            score = document.getElementById(el),
+            error = "Could not find element! Given: ";
+
+        if (score) {
+            score.innerHTML = String(this._score);
+        } else {
+            errorMsg("GameScene", "updateScore", error + el);
+        }
     }
 
     private createGrid():boolean
@@ -156,16 +196,15 @@ export default class GameScene
         }
 
         this._score = 0;
+
         this._loop = null;
         this._isGameOver = false;
 
         this._snakeMgr = [];
 
+        if (!this._isMultiplayer) this.setupScore();
         this.init();
         this.spawnCandy();
-
-        this.setupScore();
-
         this.update();
     }
 
@@ -213,19 +252,17 @@ export default class GameScene
             this.spawnCandy();
         }
     }
-
-    private updateScore():void
-    {
-        this._score += 10;
-
-        var score = document.getElementById("score");
-        score.innerHTML = String(this._score);
-    }
     
     private gameOver():void
     {
-        var hs = localStorage.getItem("snake_highscore");
-        if (this._score > hs) localStorage.setItem("snake_highscore", String(this._score));
+        var item = "snake_highscore",
+            hs   = localStorage.getItem(item);
+
+        if (hs) {
+            if (this._score > hs) localStorage.setItem(item, String(this._score));
+        } else {
+            errorMsg("GameScene", "gameOver", "Could not find localStorage item. Given: " + item);
+        }
 
         ctx.save();
         ctx.globalAlpha = 0.4;
@@ -287,7 +324,7 @@ export default class GameScene
                     candyYid = candy.getGridPositionID().y;
 
                 if (headXid == candyXid && headYid == candyYid) {
-                    this.updateScore();
+                    if (!this._isMultiplayer) this.updateScore();
 
                     this.spawnCandy();
                     this._snakeMgr[i].addTail();
@@ -324,4 +361,15 @@ export default class GameScene
 function getRandomInt(min:number, max:number):number
 {
     return Math.floor(Math.random() * (1 + max - min)) + min;
+}
+
+function errorMsg(className: string, methodName: string, ...text: string[]):void
+{
+    if (!this._game._debug) return;
+    
+    var msg = "ERROR! " + className + "::" + methodName + " | ";
+    for (let t of text) {
+        msg += t + " "
+    }
+    console.log(msg);
 }
