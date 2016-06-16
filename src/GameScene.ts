@@ -81,14 +81,14 @@ export default class GameScene
         }
     }
 
-    private setupScore():void
+    private setupScore(clear: boolean = false):void
     {
         var el    = "score",
             score = document.getElementById(el),
             error = "Could not find element! Given: ";
 
         if (score) {
-            score.innerHTML = String(this._score);
+            score.innerHTML = (this._isMultiplayer || clear) ? "" : String(this._score);
         } else {
             errorMsg("GameScene", "setupScore", error + el);
         }
@@ -97,7 +97,7 @@ export default class GameScene
         var highscore = document.getElementById("highscore");
 
         if (highscore) {
-            highscore.innerHTML = "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
+            highscore.innerHTML = (this._isMultiplayer || clear) ? "" : "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
         } else {
             errorMsg("GameScene", "setupScore", error + el);
         }
@@ -169,6 +169,7 @@ export default class GameScene
             if (!this._isGameOver) return;
             
             cancelAnimationFrame(this._loop);
+            this.setupScore(true);
             this._game.startMenu();
         }
 
@@ -182,24 +183,21 @@ export default class GameScene
             if (!this._isGameOver) return;
             
             cancelAnimationFrame(this._loop);
+            // this._game._hasGameStarted = false;
             this.startGame();
-            // this._game.startSPGame();
-        }
-    }
 
-    // initialize and add our first snake part(s) to array
-    private init():void
-    {
-        var players = (this._isMultiplayer) ? 2 : 1;
-        for (var i = 0; i < players; i += 1) {
-            var snakeMgr = new SnakeMgr(this, (i) ? "Black" : "White", i);
-            this._snakeMgr.push(snakeMgr);
+            // if (!this._isMultiplayer)
+            //     this._game.startSPGame();
+            // else
+            //     this._game.startMPGame();
+
+            // this._game.startMenu((this._isMultiplayer) ? 2 : 1);
         }
     }
 
     private startGame():void
     {
-        this._loop = null;
+        // this._loop = null;
         this._game.getMenu().cancelAnimFrame();     // hack fix
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -210,17 +208,28 @@ export default class GameScene
             }
         }
 
-        this._score = 0;
         this._isGameOver = false;
+
+        this._score = 0;
+        this.setupScore();
 
         this._snakeMgr = [];
 
-        if (!this._isMultiplayer) this.setupScore();
         this.init();
         this.spawnCandy();
         this.update();
 
         console.log('startgame');
+    }
+
+    // initialize and add our first snake part(s) to array
+    private init():void
+    {
+        var players = (this._isMultiplayer) ? 2 : 1;
+        for (var i = 0; i < players; i += 1) {
+            var snakeMgr = new SnakeMgr(this, (i) ? "Black" : "White", i);
+            this._snakeMgr.push(snakeMgr);
+        }
     }
 
     // spawn new candy randomly on field
