@@ -41,8 +41,18 @@ export default class SnakeMgr
     private init(count: number = 1):void
     {
         for (var i = 0; i < count; i += 1) {
-            var xid       = (this._playerID == 1) ? -3 + Math.round(this._gameScene.getGridWH().width / 2) + i : 3 + Math.round(this._gameScene.getGridWH().width / 2) - i,
-                yid       = Math.round(this._gameScene.getGridWH().height / 2),
+            var x, y;
+
+            if (this._playerID == 0) {
+                x = 3 + Math.round(this._gameScene.getGridWH().width / 2) - i || 0;
+                y = Math.round(this._gameScene.getGridWH().height / 2) || 0;
+            } else {
+                x = -3 + Math.round(this._gameScene.getGridWH().width / 2) + i || 0;
+                y = Math.round(this._gameScene.getGridWH().height / 2) || 0;
+            }
+
+            var xid       = x,
+                yid       = y,
                 isHead    = (i > 0) ? false : true,
                 direction = (this._playerID == 1) ? Direction.DIR_LEFT : Direction.DIR_RIGHT;
 
@@ -51,8 +61,8 @@ export default class SnakeMgr
         }
     }
     
-    // add new tail according to last snake part's direction
-    public addTail():void
+    // add new part according to last snake part's direction
+    public addPart():void
     {
         var last      = this._snakeParts.length - 1;
         var direction = this._snakeParts[last]._curDirection;
@@ -90,13 +100,12 @@ export default class SnakeMgr
             diff    = curTime - this._lastUpdateTime,
             prevDir = this._snakeParts[0]._curDirection;
 
-        // update snake and tail positions according to direction
+        // draw update snake position according to each part's direction
         for (var i = 0; i < this._snakeParts.length; i += 1)
         {
             this._snakeParts[i].draw();
 
             if (diff > this._updateTime) {
-
                 // do not update snake head -- only the player is allowed to do this
                 if (i > 0) {
                     // save current part's direction

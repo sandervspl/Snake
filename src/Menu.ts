@@ -20,7 +20,7 @@ export default class Menu
 
     private addEventHandlers():void
     {
-        canvas.addEventListener("mousemove", (e)=> { this.collision(e) });
+        canvas.addEventListener("mousemove", (e)=> { this.moveCollision(e) });
         canvas.addEventListener("mousedown", (e)=> { this.click(e) });
     }
 
@@ -124,9 +124,7 @@ export default class Menu
         for (var i = 0; i < this._buttons.length; i += 1) {
             var btn = this._buttons[i];
 
-            if (i == this._game._difficulty + 1) {
-                btn.color = "white";
-            }
+            if (i == this._game._difficulty + 1) btn.color = "white";
 
             ctx.font = btn.size + "px Verdana";
             ctx.fillStyle = btn.color;
@@ -139,17 +137,15 @@ export default class Menu
     {
         if (this._game._hasGameStarted) return;
 
-        var btn = this.collision(event);
+        var btn = this.moveCollision(event);
         if (btn != -1) {
             // sp button
             if (btn == 0) {
-                cancelAnimationFrame(this._loop); // doesn't always work? Mid loop?
                 this._game.startSPGame();
             }
 
             // mp button
             else if (btn == 1) {
-                cancelAnimationFrame(this._loop);
                 this._game.startMPGame();
             }
 
@@ -162,7 +158,7 @@ export default class Menu
     }
 
     // mouse move collision
-    private collision(event: MouseEvent):number
+    private moveCollision(event: MouseEvent):number
     {
         var rect = canvas.getBoundingClientRect(),
             mx   = event.clientX - rect.left,
@@ -203,7 +199,7 @@ export default class Menu
                 btn.x1,
                 btn.y1,
                 btn.x2 - btn.x1,
-                btn.y1 - btn.y2
+                btn.y1 - btn.y2     // text is drawn bottom-top instead of top-bottom
             );
             ctx.closePath();
         }

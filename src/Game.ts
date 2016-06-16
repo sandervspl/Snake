@@ -69,6 +69,11 @@ export default class Game
         controls.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
         controls.style.top = window.innerHeight / 2 + canvas.height / 2  + 20 + "px";
         controls.style.position = "absolute";
+
+        var git = document.getElementById("git");
+        git.style.left = window.innerWidth / 2 + canvas.width / 2 - 260 + "px";
+        git.style.top = window.innerHeight / 2 + canvas.height / 2  + 20 + "px";
+        git.style.position = "absolute";
     }
 
     // set up menu screen

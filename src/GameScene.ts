@@ -29,7 +29,7 @@ export default class GameScene
         this._isMultiplayer = isMultiplayer;
         this._showGrid = false;
 
-        if (!this._isMultiplayer) this.setupScreen();
+        this.setupScreen();
 
         if (this.createGrid()) {
             this.startGame();
@@ -54,9 +54,11 @@ export default class GameScene
     public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
     
-    // set up score elements for single-layer
+    // set up score elements for single-player
     private setupScreen():void
     {
+        if (this._isMultiplayer) return;
+
         var offsetY = 25;
 
         var el    = "score",
@@ -109,6 +111,8 @@ export default class GameScene
     // update score depending on game difficulty
     private updateScore():void
     {
+        if (this._isMultiplayer) return;
+
         this._score += 10 * this._game._difficulty;
 
         var el = "score",
@@ -201,7 +205,7 @@ export default class GameScene
     {
         this._candy = null;
         
-        // loop for nodes that are free
+        // look for nodes that are free
         var freeNodes: GridNode[][] = [];
         for (var x = 0, i = 0; x < this._gridWidth; x += 1) {
             freeNodes[i] = [];
@@ -318,7 +322,7 @@ export default class GameScene
                     var tailXid = part.getGridPositionID().x,
                         tailYid = part.getGridPositionID().y;
 
-                    // we hit a bodypart
+                    // check if we hit bodypart
                     if (headXid == tailXid && headYid == tailYid) {
                         snakeMgr._isDead = true;
                         this._isGameOver = true;
@@ -333,10 +337,10 @@ export default class GameScene
                     candyYid = candy.getGridPositionID().y;
 
                 if (headXid == candyXid && headYid == candyYid) {
-                    if (!this._isMultiplayer) this.updateScore();
+                    this.updateScore();
 
+                    this._snakeMgr[i].addPart();
                     this.spawnCandy();
-                    this._snakeMgr[i].addTail();
                 }
             }
         }
