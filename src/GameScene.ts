@@ -15,7 +15,7 @@ export default class GameScene
     private _gridSize: number;
     private _gridWidth: number;
     private _gridHeight: number;
-    private _showGrid: boolean;
+    public _showGrid: boolean;
 
     private _score: number;
     private _isMultiplayer: boolean;
@@ -28,8 +28,6 @@ export default class GameScene
 
         this._isMultiplayer = isMultiplayer;
         this._showGrid = false;
-
-        this.addEventHandlers();
 
         if (!this._isMultiplayer) this.setupScreen();
 
@@ -52,6 +50,8 @@ export default class GameScene
     }
     
     public getGrid():GridNode[][] { return this._grid; }
+
+    public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
     private setupScreen():void
     {
@@ -81,7 +81,7 @@ export default class GameScene
         }
     }
 
-    private setupScore(clear: boolean = false):void
+    public setupScore(clear: boolean = false):void
     {
         var el    = "score",
             score = document.getElementById(el),
@@ -158,48 +158,8 @@ export default class GameScene
         return true;
     }
 
-    private addEventHandlers():void { window.addEventListener('keyup', (e)=> { this.keyboardInput(e) }); }
-
-    private keyboardInput(event: KeyboardEvent):any
+    public startGame():void
     {
-        if (!this._game._hasGameStarted) return;
-
-        // ESCAPE
-        if (event.keyCode == 27) {
-            if (!this._isGameOver) return;
-            
-            cancelAnimationFrame(this._loop);
-            this.setupScore(true);
-            this._game.startMenu();
-        }
-
-        // G
-        if (event.keyCode == 71) {
-            this._showGrid = (this._showGrid) ? false : true;
-        }
-
-        // R
-        if (event.keyCode == 82) {
-            if (!this._isGameOver) return;
-            
-            cancelAnimationFrame(this._loop);
-            // this._game._hasGameStarted = false;
-            this.startGame();
-
-            // if (!this._isMultiplayer)
-            //     this._game.startSPGame();
-            // else
-            //     this._game.startMPGame();
-
-            // this._game.startMenu((this._isMultiplayer) ? 2 : 1);
-        }
-    }
-
-    private startGame():void
-    {
-        // this._loop = null;
-        this._game.getMenu().cancelAnimFrame();     // hack fix
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var x = 0; x < this._gridWidth; x += 1) {
@@ -218,8 +178,6 @@ export default class GameScene
         this.init();
         this.spawnCandy();
         this.update();
-
-        console.log('startgame');
     }
 
     // initialize and add our first snake part(s) to array
