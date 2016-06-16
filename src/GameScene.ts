@@ -5,27 +5,27 @@ import GridNode from "./GridNode";
 import Game from "./Game";
 export default class GameScene
 {
-    private _game: Game;
+    private _game: Game;                // game controller
     private _candy: __Object;           // randomly added candy on field
-    private _snakeMgr: SnakeMgr[];
+    private _snakeMgr: SnakeMgr[];      // manages all snake parts
 
-    private _loop: any;
+    private _loop: any;                 // loop handle
 
-    private _grid: GridNode[][];
-    private _gridSize: number;
-    private _gridWidth: number;
-    private _gridHeight: number;
-    public _showGrid: boolean;
+    private _grid: GridNode[][];        // grid array
+    private _gridSize: number;          // size of grid nodes
+    private _gridWidth: number;         // grid node width
+    private _gridHeight: number;        // grid node height
+    public _showGrid: boolean;          // grid show toggle
 
-    private _score: number;
-    private _isMultiplayer: boolean;
+    private _score: number;             // current score (single-player)
+    private _isMultiplayer: boolean;    // determines if we need 1 or 2 snakes
 
-    public _isGameOver: boolean;
+    public _isGameOver: boolean;        // determines if we can keep playing
 
     constructor(game: Game, isMultiplayer: boolean)
     {
         this._game = game;
-
+    
         this._isMultiplayer = isMultiplayer;
         this._showGrid = false;
 
@@ -53,6 +53,8 @@ export default class GameScene
 
     public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
+    
+    // set up score elements for single-layer
     private setupScreen():void
     {
         var offsetY = 25;
@@ -81,6 +83,7 @@ export default class GameScene
         }
     }
 
+    // give score elements some values
     public setupScore(clear: boolean = false):void
     {
         var el    = "score",
@@ -103,9 +106,10 @@ export default class GameScene
         }
     }
 
+    // update score depending on game difficulty
     private updateScore():void
     {
-        this._score += 10 * (this._game._difficulty - 1);
+        this._score += 10 * this._game._difficulty;
 
         var el = "score",
             score = document.getElementById(el),
@@ -118,6 +122,7 @@ export default class GameScene
         }
     }
 
+    // create a grid with nodes on which we position our sprites
     private createGrid():boolean
     {
         this._grid = [];
@@ -158,6 +163,7 @@ export default class GameScene
         return true;
     }
 
+    // (re)start game with starting values
     public startGame():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -180,7 +186,7 @@ export default class GameScene
         this.update();
     }
 
-    // initialize and add our first snake part(s) to array
+    // initialize snake manager(s)
     private init():void
     {
         var players = (this._isMultiplayer) ? 2 : 1;
@@ -194,8 +200,9 @@ export default class GameScene
     private spawnCandy():void
     {
         this._candy = null;
+        
+        // loop for nodes that are free
         var freeNodes: GridNode[][] = [];
-
         for (var x = 0, i = 0; x < this._gridWidth; x += 1) {
             freeNodes[i] = [];
 
@@ -209,6 +216,7 @@ export default class GameScene
             i += 1;
         }
 
+        // get random node on x and y axis
         var x = getRandomInt(0, freeNodes.length - 1),
             y = getRandomInt(0, freeNodes[x].length - 1);
 
@@ -228,6 +236,7 @@ export default class GameScene
         }
     }
     
+    // game over screen
     private gameOver():void
     {
         var winner = "No one";
@@ -276,6 +285,7 @@ export default class GameScene
         cancelAnimationFrame(this._loop);
     }
 
+    // draw grid nodes on screen
     private drawGrid():void
     {
         for (var x = 0; x < this._gridWidth; x += 1) {
@@ -285,7 +295,7 @@ export default class GameScene
         }
     }
 
-
+    // check for collision with candy, another snake and ourselves
     private collisionCheck():void
     {
         for (var i = 0; i < this._snakeMgr.length; i += 1) {
@@ -356,12 +366,13 @@ export default class GameScene
 }
 
 
-
+// random number between x and y
 function getRandomInt(min:number, max:number):number
 {
     return Math.floor(Math.random() * (1 + max - min)) + min;
 }
 
+// informative error messages
 function errorMsg(className: string, methodName: string, ...text: string[]):void
 {
     if (!this._game._debug) return;

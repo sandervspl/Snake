@@ -1,16 +1,15 @@
-import {canvas, ctx} from "./Defines";
+import {canvas, ctx, Difficulty} from "./Defines";
 import GameScene from "./GameScene";
 import Menu from "./Menu";
 
 export default class Game
 {
-    private _gameScene: GameScene;
-    private _menu: Menu;
+    private _gameScene: GameScene;      // controls all game elements
+    private _menu: Menu;                // controls all menu elements
 
-    private _hasGameStarted: boolean;
-    
-    public _difficulty: number;
-    public _debug: boolean;
+    public _hasGameStarted: boolean;    // determines if there is a game being played
+    public _difficulty: number;         // game update interval speed
+    public _debug: boolean;             // debug information into console
 
     constructor()
     {
@@ -18,9 +17,9 @@ export default class Game
         this._gameScene = null;
         this._menu = null;
         
-        this._difficulty = 2; // 2, 3, 4
+        this._difficulty = Difficulty.DIF_EASY;
         
-        this._debug = true;
+        this._debug = false;
 
         this.addEventHandlers();
         this.setupScreen();
@@ -56,6 +55,7 @@ export default class Game
         }
     }
 
+    // set up canvas position
     private setupScreen():void
     {
         canvas.width = 1000;
@@ -71,6 +71,7 @@ export default class Game
         controls.style.position = "absolute";
     }
 
+    // set up menu screen
     public startMenu():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -86,22 +87,24 @@ export default class Game
         this._menu = new Menu(this);
     }
 
+    // start single-player game
     public startSPGame():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        this._menu.cancelAnimFrame();
+        if (this._menu != null) this._menu.cancelAnimFrame();
 
         this._hasGameStarted = true;
         this._gameScene = null;
         this._gameScene = new GameScene(this, false);
     }
     
+    // start multi-player game
     public startMPGame():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        this._menu.cancelAnimFrame();
+        if (this._menu != null) this._menu.cancelAnimFrame();
 
         this._hasGameStarted = true;
         this._gameScene = null;

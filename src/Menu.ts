@@ -3,9 +3,9 @@ import Game from "./Game";
 
 export default class Menu
 {
-    private _loop: any;
-    private _buttons: any[];
-    private _game: Game;
+    private _loop: any;         // loop handle
+    private _buttons: any[];    // buttons array
+    private _game: Game;        // game controller
 
     constructor(game: Game)
     {
@@ -24,6 +24,7 @@ export default class Menu
         canvas.addEventListener("mousedown", (e)=> { this.click(e) });
     }
 
+    // set up button data
     private addButtons():void
     {
         var x1, y1, x2, y2;
@@ -111,6 +112,7 @@ export default class Menu
         };
     }
     
+    // render menu on canvas
     private drawMenu():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -122,7 +124,7 @@ export default class Menu
         for (var i = 0; i < this._buttons.length; i += 1) {
             var btn = this._buttons[i];
 
-            if (i == this._game._difficulty) {
+            if (i == this._game._difficulty + 1) {
                 btn.color = "white";
             }
 
@@ -132,6 +134,7 @@ export default class Menu
         }
     }
 
+    // look for collision with clicked position and buttons
     private click(event: MouseEvent):void
     {
         if (this._game._hasGameStarted) return;
@@ -152,12 +155,13 @@ export default class Menu
 
             // difficulty button
             else {
-                this._game._difficulty = btn;
+                this._game._difficulty = btn - 1;
                 this._buttons[btn].color = "white";
             }
         }
     }
 
+    // mouse move collision
     private collision(event: MouseEvent):number
     {
         var rect = canvas.getBoundingClientRect(),
@@ -185,6 +189,7 @@ export default class Menu
         return result;
     }
 
+    // hitbox rendering (debug)
     private drawHitbox():void
     {
         ctx.lineWidth = 1.0;
@@ -204,7 +209,7 @@ export default class Menu
         }
     }
     
-    // hack fix - does not properly cancel after second init inside this class for some reason
+    // cancel rendering
     public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
     private update():void
@@ -216,7 +221,7 @@ export default class Menu
     }
 }
 
-
+// collision check
 function isCollision(ax, ay, bx1, bx2, by1, by2):boolean
 {
     return  ax < bx2 &&

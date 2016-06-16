@@ -8,3 +8,9 @@ export enum Direction {
     DIR_LEFT,
     DIR_DOWN
 }
+
+export enum Difficulty {
+    DIF_EASY = 1,
+    DIF_MEDIUM,
+    DIF_HARD
+}
