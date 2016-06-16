@@ -141,12 +141,12 @@ export default class Menu
         if (btn != -1) {
             // sp button
             if (btn == 0) {
-                this._game.startSPGame();
+                this._game.startGame(false);
             }
 
             // mp button
             else if (btn == 1) {
-                this._game.startMPGame();
+                this._game.startGame(true);
             }
 
             // difficulty button

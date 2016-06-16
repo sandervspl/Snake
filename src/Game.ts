@@ -87,32 +87,17 @@ export default class Game
             this._gameScene.cancelAnimFrame();
             this._gameScene.setupScore(true);
         }
-        
-        this._gameScene = null;
+
         this._menu = new Menu(this);
     }
 
-    // start single-player game
-    public startSPGame():void
+    public startGame(isMultiplayer: boolean):void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (this._menu != null) this._menu.cancelAnimFrame();
 
         this._hasGameStarted = true;
-        this._gameScene = null;
-        this._gameScene = new GameScene(this, false);
-    }
-    
-    // start multi-player game
-    public startMPGame():void
-    {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (this._menu != null) this._menu.cancelAnimFrame();
-
-        this._hasGameStarted = true;
-        this._gameScene = null;
-        this._gameScene = new GameScene(this, true);
+        this._gameScene = new GameScene(this, isMultiplayer);
     }
 }

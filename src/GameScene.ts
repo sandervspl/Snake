@@ -17,7 +17,7 @@ export default class GameScene
     private _gridHeight: number;        // grid node height
     public _showGrid: boolean;          // grid show toggle
 
-    private _score: number;             // current score (single-player)
+    private _score: number[];           // current score (single-player)
     private _isMultiplayer: boolean;    // determines if we need 1 or 2 snakes
 
     public _isGameOver: boolean;        // determines if we can keep playing
@@ -57,31 +57,50 @@ export default class GameScene
     // set up score elements for single-player
     private setupScreen():void
     {
-        if (this._isMultiplayer) return;
-
         var offsetY = 25;
 
+        // player 1 score
         var el    = "score",
             score = document.getElementById(el),
             error = "Could not find element! Given: ";
 
         if (score) {
+            score.style.color = "White";
             score.style.left = window.innerWidth / 2 + "px";
             score.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
+
+            // position is a bit offset in multi-player
+            if (this._isMultiplayer) score.style.left = window.innerWidth / 2 + 50 + "px";
+
             score.style.position = "absolute";
         } else {
             errorMsg("GameScene", "setupScreen", error + el);
         }
 
-        el = "highscore";
-        var highscore = document.getElementById("highscore");
+        if (this._isMultiplayer) {
+            // player 2 score
+            el = "score2";
+            var score2 = document.getElementById(el);
 
-        if (highscore) {
-            highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
-            highscore.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
-            highscore.style.position = "absolute";
+            if (score2) {
+                score2.style.left = window.innerWidth / 2 - 50 + "px";
+                score2.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
+                score2.style.position = "absolute";
+            } else {
+                errorMsg("GameScene", "setupScreen", error + el);
+            }
         } else {
-            errorMsg("GameScene", "setupScreen", error + el);
+            // high score
+            el = "highscore";
+            var highscore = document.getElementById(el);
+
+            if (highscore) {
+                highscore.style.left = window.innerWidth / 2 - canvas.width / 2 + "px";
+                highscore.style.top = window.innerHeight / 2 - canvas.height / 2 - offsetY + "px";
+                highscore.style.position = "absolute";
+            } else {
+                errorMsg("GameScene", "setupScreen", error + el);
+            }
         }
     }
 
@@ -92,35 +111,51 @@ export default class GameScene
             score = document.getElementById(el),
             error = "Could not find element! Given: ";
 
+        // player 1 score
         if (score) {
-            score.innerHTML = (this._isMultiplayer || clear) ? "" : String(this._score);
+            score.innerHTML = (clear) ? "" : String(this._score[0]);
         } else {
             errorMsg("GameScene", "setupScore", error + el);
         }
 
-        el = "highscore";
-        var highscore = document.getElementById("highscore");
+        if (this._isMultiplayer) {
+            // player 2 score
+            el = "score2";
+            var score2 = document.getElementById(el);
 
-        if (highscore) {
-            highscore.innerHTML = (this._isMultiplayer || clear) ? "" : "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
+            if (score2) {
+                score2.innerHTML = (clear) ? "" : String(this._score[1]);
+            } else {
+                errorMsg("GameScene", "setupScore", error + el);
+            }
         } else {
-            errorMsg("GameScene", "setupScore", error + el);
+            // high score
+            el = "highscore";
+            var highscore = document.getElementById(el);
+
+            if (highscore) {
+                highscore.innerHTML = (clear) ? "" : "Highscore: " + (localStorage.getItem("snake_highscore") || 0);
+            } else {
+                errorMsg("GameScene", "setupScore", error + el);
+            }
         }
     }
 
     // update score depending on game difficulty
-    private updateScore():void
+    private updateScore(playerID: number):void
     {
-        if (this._isMultiplayer) return;
+        if (!this._isMultiplayer) {
+            this._score[0] += 10 * this._game._difficulty;
+        } else {
+            this._score[playerID] += 1;
+        }
 
-        this._score += 10 * this._game._difficulty;
-
-        var el = "score",
+        var el = (playerID == 0) ? "score" : "score2",
             score = document.getElementById(el),
             error = "Could not find element! Given: ";
 
         if (score) {
-            score.innerHTML = String(this._score);
+            score.innerHTML = String(this._score[playerID]);
         } else {
             errorMsg("GameScene", "updateScore", error + el);
         }
@@ -180,7 +215,8 @@ export default class GameScene
 
         this._isGameOver = false;
 
-        this._score = 0;
+        this._score = [];
+        this._score[0] = this._score[1] = 0;
         this.setupScore();
 
         this._snakeMgr = [];
@@ -243,16 +279,52 @@ export default class GameScene
     // game over screen
     private gameOver():void
     {
-        var winner = "No one";
+        // game can be won by having the biggest snake
+        // or surviving until the other snake hits the wall or you
+        // it's a draw when both snakes hit the wall or a snake on the same update and are of equal length
         if (this._isMultiplayer) {
-            for (var i = 0; i < this._snakeMgr.length; i += 1) {
+            var winnerText = "";
+            var playersCount = this._snakeMgr.length,
+                count = 0,
+                title = "";
+
+            for (var i = 0; i < playersCount; i += 1) {
                 var index = (i > 0) ? 0 : 1;
-                if (this._snakeMgr[i]._isDead) winner = this._snakeMgr[index].getColor();
+                if (this._snakeMgr[i]._isDead) {
+                    title = this._snakeMgr[index].getColor();
+                    count += 1;
+                }
+            }
+
+            if (playersCount != count) {
+                winnerText = title + " wins!";
+            } else {
+                var winner    = -1,
+                    snakeSize = 0,
+                    isDraw    = false;
+
+                for (var i = 0; i < playersCount; i += 1) {
+                    var size = this._snakeMgr[i].getSnakeParts().length;
+                    if (size > snakeSize) {
+                        snakeSize = size;
+                        winner = i;
+                        continue;
+                    }
+
+                    isDraw = (size == snakeSize);
+                }
+
+                if (!isDraw) {
+                    title = this._snakeMgr[winner].getColor();
+                    winnerText = title + " wins!";
+                } else {
+                    winnerText = "Draw!";
+                }
             }
         }
 
         // game over message
-        var msg  = (this._isMultiplayer) ? winner + " wins!" : "Game Over!",
+        var msg  = (this._isMultiplayer) ? winnerText : "Game Over!",
             msg2 = "Press R to play again",
             msg3 = "Press ESCAPE to go to menu";
 
@@ -281,7 +353,8 @@ export default class GameScene
             hs   = localStorage.getItem(item);
 
         if (hs) {
-            if (this._score > hs) localStorage.setItem(item, String(this._score));
+            if (!this._isMultiplayer && this._score[0] > hs)
+                localStorage.setItem(item, String(this._score[0]));
         } else {
             errorMsg("GameScene", "gameOver", "Could not find localStorage item. Given: " + item);
         }
@@ -337,7 +410,7 @@ export default class GameScene
                     candyYid = candy.getGridPositionID().y;
 
                 if (headXid == candyXid && headYid == candyYid) {
-                    this.updateScore();
+                    this.updateScore(i);
 
                     this._snakeMgr[i].addPart();
                     this.spawnCandy();
