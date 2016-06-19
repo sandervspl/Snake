@@ -17,6 +17,10 @@ export default class ___Object
     {
         this._grid = grid;
         this._gridPositionID = { x: xid, y: yid };
+        this._position = {
+            x: grid[xid][yid].getPosition().x || 0,
+            y: grid[xid][yid].getPosition().y || 0
+        };
 
         this._size = size;
         this._shape = shape;
