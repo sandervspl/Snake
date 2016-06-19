@@ -11,7 +11,7 @@ export default class SnakeMgr
     private _color:             string;         // rendering color
     private _playerID:          number;         // player 1 or 2
     
-    public _isDead: boolean;                    // dead or not
+    public _isDead:             boolean;        // dead or not
     
     constructor(game: GameScene, color: string, playerID: number)
     {

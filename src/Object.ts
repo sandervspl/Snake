@@ -11,7 +11,7 @@ export default class ___Object
     private _color:             string;                    // rendering color
     private _tick:              number;                    // sin ticker
 
-    public _isBeyondMap: boolean;                       // determines if object is on a legal grid position
+    public _isBeyondMap:        boolean;                   // determines if object is on a legal grid position
     
     constructor(xid: number, yid: number, grid: GridNode[][], size: number, shape: string, color: string)
     {
