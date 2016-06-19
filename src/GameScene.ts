@@ -3,19 +3,16 @@ import Object from "./Object";
 import SnakeMgr from "./SnakeMgr";
 import GridNode from "./GridNode";
 import Game from "./Game";
+import Grid from "./Grid";
+
 export default class GameScene
 {
     private _game:              Game;            // game controller
+    private _grid:              Grid;            // grid
     private _candy:             Object;          // randomly added candy on field
     private _snakeMgr:          SnakeMgr[];      // manages all snake parts
 
     private _loop:              number;          // loop handle
-
-    private _grid:              GridNode[][];    // grid array
-    private _gridSize:          number;          // size of grid nodes
-    private _gridWidth:         number;          // grid node width
-    private _gridHeight:        number;          // grid node height
-    public _showGrid:           boolean;         // grid show toggle
 
     private _score:             number[];        // current score (single-player)
     private _isMultiplayer:     boolean;         // determines if we need 1 or 2 snakes
@@ -25,13 +22,13 @@ export default class GameScene
     constructor(game: Game, isMultiplayer: boolean)
     {
         this._game = game;
-    
+        this._grid = new Grid();
+        
         this._isMultiplayer = isMultiplayer;
-        this._showGrid = false;
 
         this.setupScreen();
 
-        if (this.createGrid()) {
+        if (this._grid.init()) {
             this.startGame();
         } else {
             errorMsg("GameScene", "constructor", "Unable to create grid for this canvas size and grid size combination.");
@@ -39,17 +36,7 @@ export default class GameScene
     }
     
     public getGame():Game { return this._game; }
-    
-    public getGridSize():number { return this._gridSize; }
-    
-    public getGridWH() {
-        return {
-            width: this._gridWidth,
-            height: this._gridHeight
-        }
-    }
-    
-    public getGrid():GridNode[][] { return this._grid; }
+    public getGrid():Grid { return this._grid; }
 
     public cancelAnimFrame():void { cancelAnimationFrame(this._loop); }
 
@@ -161,57 +148,12 @@ export default class GameScene
         }
     }
 
-    // create a grid with nodes on which we position our sprites
-    private createGrid():boolean
-    {
-        this._grid = [];
-
-        var size = 50;
-        this._gridSize = size;
-
-        var tries = 0;
-        while (canvas.width % this._gridSize) {
-            if (tries < 500) {
-                this._gridSize -= 0.5;
-                tries += 1;
-            } else if (tries >= 500 && tries < 1000) {
-                if (this._gridSize < size) this._gridSize = size;
-                this._gridSize += 0.5;
-                tries += 1;
-            } else {
-                break;
-            }
-        }
-
-        if (canvas.width % this._gridSize || canvas.height % this._gridSize)
-            return false;
-
-        this._gridWidth = Math.round(canvas.width / this._gridSize);
-        this._gridHeight = Math.round(canvas.height / this._gridSize);
-
-        for (var x = 0; x < this._gridWidth; x += 1) {
-            this._grid[x] = [];
-
-            for (var y = 0; y < this._gridHeight; y += 1) {
-                var posId = {x: x, y: y};
-                
-                this._grid[x][y] = new GridNode(this._gridSize, posId);
-            }
-        }
-
-        return true;
-    }
-
     // (re)start game with starting values
     public startGame():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (var x = 0; x < this._gridWidth; x += 1) {
-            for (var y = 0; y < this._gridHeight; y += 1) {
-                this._grid[x][y]._isOccupied = false;
-            }
-        }
+        this._grid.setNodeOccupation(false);
 
         this._isGameOver = false;
 
@@ -243,12 +185,14 @@ export default class GameScene
         
         // look for nodes that are free
         var freeNodes: GridNode[][] = [];
-        for (var x = 0, i = 0; x < this._gridWidth; x += 1) {
+        for (var x = 0, i = 0; x < this._grid.getGridSize().width; x += 1) {
             freeNodes[i] = [];
 
-            for (var y = 0, j = 0; y < this._gridHeight; y += 1) {
-                if (!this._grid[x][y]._isOccupied) {
-                    freeNodes[i][j] = this._grid[x][y];
+            for (var y = 0, j = 0; y < this._grid.getGridSize().height; y += 1) {
+                var node = this._grid.getGridNodes()[x][y];
+                
+                if (!node._isOccupied) {
+                    freeNodes[i][j] = node;
                     j += 1;
                 }
             }
@@ -270,7 +214,7 @@ export default class GameScene
             var xid = freeNodes[x][y].getPositionID().x,
                 yid = freeNodes[x][y].getPositionID().y;
 
-            this._candy = new Object(xid, yid, this._grid, this._gridSize / 2, "circle", "orange");
+            this._candy = new Object(xid, yid, this._grid, "circle", "orange");
         } else {
             this.spawnCandy();
         }
@@ -362,16 +306,6 @@ export default class GameScene
         cancelAnimationFrame(this._loop);
     }
 
-    // draw grid nodes on screen
-    private drawGrid():void
-    {
-        for (var x = 0; x < this._gridWidth; x += 1) {
-            for (var y = 0; y < this._gridHeight; y += 1) {
-                this._grid[x][y].draw();
-            }
-        }
-    }
-
     // check for collision with candy, another snake and ourselves
     private collisionCheck():void
     {
@@ -431,7 +365,8 @@ export default class GameScene
         }
 
         if (this._candy != null) this._candy.draw();
-        if (this._showGrid) this.drawGrid();
+        
+        this._grid.update();
 
         if (this._isGameOver) {
             this.gameOver();

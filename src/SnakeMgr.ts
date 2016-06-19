@@ -13,9 +13,9 @@ export default class SnakeMgr
     
     public _isDead:             boolean;        // dead or not
     
-    constructor(game: GameScene, color: string, playerID: number)
+    constructor(gameScene: GameScene, color: string, playerID: number)
     {
-        this._gameScene = game;
+        this._gameScene = gameScene;
         this._snakeParts = [];
         this._lastUpdateTime = Date.now();
 
@@ -41,22 +41,20 @@ export default class SnakeMgr
     private init(count: number = 1):void
     {
         for (var i = 0; i < count; i += 1) {
-            var x, y;
+            var xid, yid;
 
             if (this._playerID == 0) {
-                x = 3 + Math.round(this._gameScene.getGridWH().width / 2) - i || 0;
-                y = Math.round(this._gameScene.getGridWH().height / 2) || 0;
+                xid = 3 + Math.round(this._gameScene.getGrid().getGridSize().width / 2) - i || 0;
+                yid = Math.round(this._gameScene.getGrid().getGridSize().height / 2) || 0;
             } else {
-                x = -3 + Math.round(this._gameScene.getGridWH().width / 2) + i || 0;
-                y = Math.round(this._gameScene.getGridWH().height / 2) || 0;
+                xid = -3 + Math.round(this._gameScene.getGrid().getGridSize().width / 2) + i || 0;
+                yid = Math.round(this._gameScene.getGrid().getGridSize().height / 2) || 0;
             }
 
-            var xid       = x,
-                yid       = y,
-                isHead    = (i > 0) ? false : true,
+            var isHead    = (i > 0) ? false : true,
                 direction = (this._playerID == 1) ? Direction.DIR_LEFT : Direction.DIR_RIGHT;
 
-            var tail = new SnakePart(xid, yid, this._gameScene.getGrid(), this._gameScene.getGridSize(), direction, isHead, this._playerID);
+            var tail = new SnakePart(xid, yid, this._gameScene.getGrid(), direction, isHead, this._playerID);
             this._snakeParts.push(tail);
         }
     }
@@ -67,29 +65,29 @@ export default class SnakeMgr
         var last      = this._snakeParts.length - 1;
         var direction = this._snakeParts[last]._curDirection;
 
-        var x = this._snakeParts[last].getGridPositionID().x,
-            y = this._snakeParts[last].getGridPositionID().y;
+        var xid = this._snakeParts[last].getGridPositionID().x,
+            yid = this._snakeParts[last].getGridPositionID().y;
 
         switch (direction)
         {
             case Direction.DIR_UP:
-                y += 1;
+                yid += 1;
                 break;
 
             case Direction.DIR_RIGHT:
-                x -= 1;
+                xid -= 1;
                 break;
 
             case Direction.DIR_DOWN:
-                y -= 1;
+                yid -= 1;
                 break;
 
             case Direction.DIR_LEFT:
-                x += 1;
+                xid += 1;
                 break;
         }
 
-        var tail = new SnakePart(x, y, this._gameScene.getGrid(), this._gameScene.getGridSize(), direction, false, this._playerID);
+        var tail = new SnakePart(xid, yid, this._gameScene.getGrid(), direction, false, this._playerID);
         this._snakeParts.push(tail);
     }
 
@@ -119,8 +117,8 @@ export default class SnakeMgr
                 }
 
                 // if next position is illegal, snake is dead
-                if (!this._snakeParts[i].updatePosition()) this._isDead = true;
-                if (this._snakeParts[0]._isBeyondMap) this._isDead = true;
+                if (!this._snakeParts[i].updatePosition() || this._snakeParts[0]._isBeyondMap) 
+                    this._isDead = true;
             }
         }
 

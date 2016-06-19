@@ -1,8 +1,8 @@
-import __Object from "./Object";
+import Object from "./Object";
 import {Direction} from "./defines";
-import GridNode from "./GridNode";
+import Grid from "./Grid";
 
-export default class SnakePart extends __Object
+export default class SnakePart extends Object
 {
     private _isHead:        boolean;        // determines if this is a head or tail piece
 
@@ -12,11 +12,10 @@ export default class SnakePart extends __Object
     private _nextDirection: Direction;      // next direction for head piece
     public _curDirection:   Direction;      // current direction snake piece is heading towards
     
-    constructor(x: number, y: number, grid: GridNode[][], size: number, direction: Direction, 
-                isHead: boolean, playerID: number)
+    constructor(x: number, y: number, grid: Grid, direction: Direction, isHead: boolean, playerID: number)
     {
         var color = (playerID) ? "black" : "white";
-        super(x, y, grid, size, "rect", color);
+        super(x, y, grid, "rect", color);
         
         this._isHead = isHead;
         this._curDirection = direction;

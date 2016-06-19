@@ -30,8 +30,6 @@ export default class Menu
         var x1, y1, x2, y2;
         var fontSize = 40;
 
-        ctx.font = fontSize + "px Verdana";
-
         var text = {
             title: "SNAKE",
             sp: "Single-player",
@@ -40,6 +38,8 @@ export default class Menu
             opts_medium: "Faster",
             opts_hard: "Fastest"
         };
+
+        ctx.font = fontSize + "px Verdana";
 
         x1 = canvas.width/2 - ctx.measureText(text.sp).width/2;
         y1 = canvas.height/2 + fontSize;

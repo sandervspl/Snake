@@ -1,5 +1,6 @@
 import {ctx} from "./Defines";
 import GridNode from "./GridNode";
+import Grid from "./Grid";
 
 export default class ___Object
 {
@@ -12,27 +13,27 @@ export default class ___Object
     private _tick:              number;                    // sin ticker
 
     public _isBeyondMap:        boolean;                   // determines if object is on a legal grid position
-    
-    constructor(xid: number, yid: number, grid: GridNode[][], size: number, shape: string, color: string)
+
+    constructor(xid: number, yid: number, grid: Grid, shape: string, color: string)
     {
-        this._grid = grid;
+        this._grid = grid.getGridNodes();
+
         this._gridPositionID = { x: xid, y: yid };
         this._position = {
-            x: grid[xid][yid].getPosition().x || 0,
-            y: grid[xid][yid].getPosition().y || 0
+            x: this._grid[xid][yid].getPosition().x || 0,
+            y: this._grid[xid][yid].getPosition().y || 0
         };
 
-        this._size = size;
-        this._shape = shape;
-        this._color = color;
+        this._shape = shape || "rect";
+        this._color = color || "Purple";
+        this._size = (this._shape === "rect") ? grid.getNodeSize() : grid.getNodeSize()/2 || 10;
         this._tick = 0;
-
         this._isBeyondMap = false;
 
         this.setPosition(xid, yid);
         this.draw();
     }
-    
+
     public getPosition():{x: number, y: number} { return this._position; }
 
     public getGridPositionID():{x: number, y: number} { return this._gridPositionID; }
@@ -54,9 +55,9 @@ export default class ___Object
 
         this._position.x = this._grid[xid][yid].getPosition().x;
         this._position.y = this._grid[xid][yid].getPosition().y;
-        
+
         this._grid[xid][yid]._isOccupied = true;
-        
+
         return true;
     }
 
@@ -67,14 +68,14 @@ export default class ___Object
             ctx.beginPath();
             ctx.fillStyle = this._color;
             ctx.fillRect(
-                this._position.x, 
-                this._position.y, 
-                this._size * 0.98, 
+                this._position.x,
+                this._position.y,
+                this._size * 0.98,
                 this._size * 0.98
             );
             ctx.closePath();
         }
-        
+
         if (this._shape == "circle") {
             var baseRadius = { min: this._size * 0.95, max: this._size };
             var osc = 0.5 + Math.sin(this._tick / 13);
@@ -84,10 +85,10 @@ export default class ___Object
             ctx.beginPath();
             ctx.fillStyle = this._color;
             ctx.arc(
-                this._position.x + this._size, 
-                this._position.y + this._size, 
-                radius, 0, 
-                Math.PI * 2, 
+                this._position.x + this._size,
+                this._position.y + this._size,
+                radius, 0,
+                Math.PI * 2,
                 false
             );
             ctx.fill();

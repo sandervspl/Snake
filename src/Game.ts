@@ -43,7 +43,7 @@ export default class Game
 
         // G
         if (event.keyCode == 71) {
-            this._gameScene._showGrid = (this._gameScene._showGrid) ? false : true;
+            this._gameScene.getGrid()._showGrid = (this._gameScene.getGrid()._showGrid) ? false : true;
         }
 
         // R

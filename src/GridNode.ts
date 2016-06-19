@@ -4,18 +4,18 @@ export default class GridNode
 {
     private _PositionID:    { x: number, y: number };      // position on grid
     private _Position:      { x: number, y: number };      // position on canvas
-    private _gridSize:      number;                        // grid node size
+    private _size:          number;                        // grid node size
     
     public _isOccupied:     boolean;                       // free or occupied by candy or snake
     
-    constructor(gridSize: number, positionID: {x:number, y:number})
+    constructor(size: number, positionID: {x:number, y:number})
     {
-        this._gridSize = gridSize;
+        this._size = size;
         this._PositionID = positionID;
         
         this._Position = { 
-            x: gridSize * this._PositionID.x, 
-            y: gridSize * this._PositionID.y
+            x: size * this._PositionID.x, 
+            y: size * this._PositionID.y
         };
         
         this._isOccupied = false;
@@ -36,8 +36,8 @@ export default class GridNode
         ctx.strokeRect(
             this._Position.x,
             this._Position.y,
-            this._gridSize,
-            this._gridSize
+            this._size,
+            this._size
         );
         ctx.closePath();
     }
