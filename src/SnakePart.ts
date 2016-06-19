@@ -4,11 +4,13 @@ import GridNode from "./GridNode";
 
 export default class SnakePart extends __Object
 {
-    private _isHead: boolean;           // determines if this is a head or tail piece
-    private _keys: any;                 // keyboard inputs for multi-player
+    private _isHead:        boolean;        // determines if this is a head or tail piece
+
+    // keyboard inputs
+    private _keys:          {up:number, right:number, down:number, left:number}; 
         
-    private _nextDirection: Direction;  // next direction for head piece
-    public _curDirection: Direction;    // current direction snake piece is heading towards
+    private _nextDirection: Direction;      // next direction for head piece
+    public _curDirection:   Direction;      // current direction snake piece is heading towards
     
     constructor(x: number, y: number, grid: GridNode[][], size: number, direction: Direction, 
                 isHead: boolean, playerID: number)

@@ -1,5 +1,5 @@
 // canvas 
-export var canvas = <HTMLCanvasElement> document.getElementById('canvas');
+export var canvas = <HTMLCanvasElement>document.getElementById('canvas');
 export var ctx: CanvasRenderingContext2D = canvas.getContext('2d');
 
 export enum Direction {

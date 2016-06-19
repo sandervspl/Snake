@@ -3,9 +3,9 @@ import Game from "./Game";
 
 export default class Menu
 {
-    private _loop: any;         // loop handle
-    private _buttons: any[];    // buttons array
-    private _game: Game;        // game controller
+    private _loop:      number;     // loop handle
+    private _buttons:   any[];      // buttons array
+    private _game:      Game;       // game controller
 
     constructor(game: Game)
     {

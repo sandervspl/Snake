@@ -4,14 +4,14 @@ import GameScene from "./GameScene";
 
 export default class SnakeMgr
 {
-    private _snakeParts: SnakePart[];       // snake parts array
-    private _lastUpdateTime: number;        // last time we updated snake position
-    private _updateTime: number;            // time difference between updates
-    private _gameScene: GameScene;          // gameScene controller
-    private _color: string;                 // rendering color
-    private _playerID: number;              // player 1 or 2
+    private _snakeParts:        SnakePart[];    // snake parts array
+    private _lastUpdateTime:    number;         // last time we updated snake position
+    private _updateTime:        number;         // time difference between updates
+    private _gameScene:         GameScene;      // gameScene controller
+    private _color:             string;         // rendering color
+    private _playerID:          number;         // player 1 or 2
     
-    public _isDead: boolean;                // dead or not
+    public _isDead: boolean;                    // dead or not
     
     constructor(game: GameScene, color: string, playerID: number)
     {

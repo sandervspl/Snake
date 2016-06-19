@@ -1,26 +1,26 @@
 import {ctx, canvas} from "./defines";
-import __Object from "./Object";
+import Object from "./Object";
 import SnakeMgr from "./SnakeMgr";
 import GridNode from "./GridNode";
 import Game from "./Game";
 export default class GameScene
 {
-    private _game: Game;                // game controller
-    private _candy: __Object;           // randomly added candy on field
-    private _snakeMgr: SnakeMgr[];      // manages all snake parts
+    private _game:              Game;            // game controller
+    private _candy:             Object;          // randomly added candy on field
+    private _snakeMgr:          SnakeMgr[];      // manages all snake parts
 
-    private _loop: any;                 // loop handle
+    private _loop:              number;          // loop handle
 
-    private _grid: GridNode[][];        // grid array
-    private _gridSize: number;          // size of grid nodes
-    private _gridWidth: number;         // grid node width
-    private _gridHeight: number;        // grid node height
-    public _showGrid: boolean;          // grid show toggle
+    private _grid:              GridNode[][];    // grid array
+    private _gridSize:          number;          // size of grid nodes
+    private _gridWidth:         number;          // grid node width
+    private _gridHeight:        number;          // grid node height
+    public _showGrid:           boolean;         // grid show toggle
 
-    private _score: number[];           // current score (single-player)
-    private _isMultiplayer: boolean;    // determines if we need 1 or 2 snakes
+    private _score:             number[];        // current score (single-player)
+    private _isMultiplayer:     boolean;         // determines if we need 1 or 2 snakes
 
-    public _isGameOver: boolean;        // determines if we can keep playing
+    public _isGameOver:         boolean;         // determines if we can keep playing
 
     constructor(game: Game, isMultiplayer: boolean)
     {
@@ -270,7 +270,7 @@ export default class GameScene
             var xid = freeNodes[x][y].getPositionID().x,
                 yid = freeNodes[x][y].getPositionID().y;
 
-            this._candy = new __Object(xid, yid, this._grid, this._gridSize / 2, "circle", "orange");
+            this._candy = new Object(xid, yid, this._grid, this._gridSize / 2, "circle", "orange");
         } else {
             this.spawnCandy();
         }

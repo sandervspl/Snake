@@ -3,14 +3,13 @@ import GridNode from "./GridNode";
 
 export default class ___Object
 {
-    private _x: number;                                 // position on x axis on canvas
-    private _y: number;                                 // position on y axis on canvas
-    private _gridPositionID: {x: number, y: number};    // position on grid
-    private _grid: GridNode[][];                        // grid nodes array
-    private _size: number;                              // size/radius of object
-    private _shape: string;                             // rectangle or circle
-    private _color: string;                             // rendering color
-    private _tick: number;                              // sin ticker
+    private _position:          {x: number, y: number};    // position on canvas
+    private _gridPositionID:    {x: number, y: number};    // position on grid
+    private _grid:              GridNode[][];              // grid nodes array
+    private _size:              number;                    // size/radius of object
+    private _shape:             string;                    // rectangle or circle
+    private _color:             string;                    // rendering color
+    private _tick:              number;                    // sin ticker
 
     public _isBeyondMap: boolean;                       // determines if object is on a legal grid position
     
@@ -30,11 +29,9 @@ export default class ___Object
         this.draw();
     }
     
-    public getPositionX():number { return this._x; }
+    public getPosition():{x: number, y: number} { return this._position; }
 
-    public getPositionY():number { return this._y; }
-
-    public getGridPositionID() { return this._gridPositionID; }
+    public getGridPositionID():{x: number, y: number} { return this._gridPositionID; }
 
     public getSize():number { return this._size; }
 
@@ -51,8 +48,8 @@ export default class ___Object
         this._gridPositionID.x = xid;
         this._gridPositionID.y = yid;
 
-        this._x = this._grid[xid][yid].getPosition().x;
-        this._y = this._grid[xid][yid].getPosition().y;
+        this._position.x = this._grid[xid][yid].getPosition().x;
+        this._position.y = this._grid[xid][yid].getPosition().y;
         
         this._grid[xid][yid]._isOccupied = true;
         
@@ -65,7 +62,12 @@ export default class ___Object
         if (this._shape == "rect") {
             ctx.beginPath();
             ctx.fillStyle = this._color;
-            ctx.fillRect(this._x, this._y, this._size * 0.98, this._size * 0.98);
+            ctx.fillRect(
+                this._position.x, 
+                this._position.y, 
+                this._size * 0.98, 
+                this._size * 0.98
+            );
             ctx.closePath();
         }
         
@@ -77,7 +79,13 @@ export default class ___Object
 
             ctx.beginPath();
             ctx.fillStyle = this._color;
-            ctx.arc(this._x + this._size, this._y + this._size, radius, 0, Math.PI * 2, false);
+            ctx.arc(
+                this._position.x + this._size, 
+                this._position.y + this._size, 
+                radius, 0, 
+                Math.PI * 2, 
+                false
+            );
             ctx.fill();
             ctx.closePath();
         }

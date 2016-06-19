@@ -4,12 +4,12 @@ import Menu from "./Menu";
 
 export default class Game
 {
-    private _gameScene: GameScene;      // controls all game elements
-    private _menu: Menu;                // controls all menu elements
+    private _gameScene:     GameScene;      // controls all game elements
+    private _menu:          Menu;           // controls all menu elements
 
-    public _hasGameStarted: boolean;    // determines if there is a game being played
-    public _difficulty: number;         // game update interval speed
-    public _debug: boolean;             // debug information into console
+    public _hasGameStarted: boolean;        // determines if there is a game being played
+    public _difficulty:     number;         // game update interval speed
+    public _debug:          boolean;        // debug information into console
 
     constructor()
     {

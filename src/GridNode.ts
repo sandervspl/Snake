@@ -2,11 +2,11 @@ import {ctx} from "./Defines";
 
 export default class GridNode
 {
-    private _PositionID: { x: number, y: number };      // position on grid
-    private _Position: { x: number, y: number };        // position on canvas
-    private _gridSize: number;                          // grid node size
+    private _PositionID:    { x: number, y: number };      // position on grid
+    private _Position:      { x: number, y: number };      // position on canvas
+    private _gridSize:      number;                        // grid node size
     
-    public _isOccupied: boolean;                        // free or occupied by candy or snake
+    public _isOccupied:     boolean;                       // free or occupied by candy or snake
     
     constructor(gridSize: number, positionID: {x:number, y:number})
     {
