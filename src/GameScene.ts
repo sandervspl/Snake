@@ -1,5 +1,5 @@
 import {ctx, canvas} from "./defines";
-import Object from "./Object";
+import GameObject from "./GameObject";
 import SnakeMgr from "./SnakeMgr";
 import GridNode from "./GridNode";
 import Game from "./Game";
@@ -7,12 +7,12 @@ import Grid from "./Grid";
 
 export default class GameScene
 {
+    private _loop:              number;          // loop handle
+    
     private _game:              Game;            // game controller
     private _grid:              Grid;            // grid
-    private _candy:             Object;          // randomly added candy on field
+    private _candy:             GameObject;      // randomly added candy on field
     private _snakeMgr:          SnakeMgr[];      // manages all snake parts
-
-    private _loop:              number;          // loop handle
 
     private _score:             number[];        // current score (single-player)
     private _isMultiplayer:     boolean;         // determines if we need 1 or 2 snakes
@@ -190,7 +190,7 @@ export default class GameScene
 
             for (var y = 0, j = 0; y < this._grid.getGridSize().height; y += 1) {
                 var node = this._grid.getGridNodes()[x][y];
-                
+
                 if (!node._isOccupied) {
                     freeNodes[i][j] = node;
                     j += 1;
@@ -214,7 +214,7 @@ export default class GameScene
             var xid = freeNodes[x][y].getPositionID().x,
                 yid = freeNodes[x][y].getPositionID().y;
 
-            this._candy = new Object(xid, yid, this._grid, "circle", "orange");
+            this._candy = new GameObject(xid, yid, this._grid, "circle", "orange");
         } else {
             this.spawnCandy();
         }
@@ -354,7 +354,7 @@ export default class GameScene
     }
 
     // update sprites
-    public update():void
+    private update():void
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 

@@ -1,8 +1,8 @@
-import Object from "./Object";
+import GameObject from "./GameObject";
 import {Direction} from "./defines";
 import Grid from "./Grid";
 
-export default class SnakePart extends Object
+export default class SnakePart extends GameObject
 {
     private _isHead:        boolean;        // determines if this is a head or tail piece
 

@@ -30,7 +30,7 @@ export default class Game
 
     private addEventHandlers():void { window.addEventListener('keyup', (e)=> { this.keyboardInput(e) }); }
 
-    private keyboardInput(event: KeyboardEvent):any
+    private keyboardInput(event: KeyboardEvent):void
     {
         if (!this._hasGameStarted) return;
 
